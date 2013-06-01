@@ -1,0 +1,1 @@
+1. Add the hosts in hosts.conf to your host file

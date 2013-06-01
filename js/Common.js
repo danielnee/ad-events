@@ -1,0 +1,1 @@
+var UNDEFINED = "undefined";
