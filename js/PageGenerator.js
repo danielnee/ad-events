@@ -31,6 +31,7 @@ function PageGenerator(iIframeDepth, bSameDomain, bAltFrame) {
             $("body").append("<script src=\"js/FlashVisibilityDetector.js\"></script>");
             $("body").append("<script src=\"js/MouseoverDetection.js\"></script>");
             $("body").append("<script src=\"js/ContentLoaded.js\"></script>");
+            $("body").append("<script src=\"js/EventLog.js\"></script>");            
             $("body").append("<script src=\"js/Main.js\"></script>");
             $("body").append("<img src=\"img/lena.png\" height=\"300\" width=\"250\"> ");
         }

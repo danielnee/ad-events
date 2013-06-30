@@ -178,7 +178,7 @@ function ElementPositionFinder() {
      */
     this.CheckForObstruction = function(cAd, cCurWindow) {
         var bObstructed = false;
-        if (typeof cCurWindow.document.elementFromPoint !== INDEFINED) {
+        if (typeof cCurWindow.document.elementFromPoint !== UNDEFINED) {
             var aPos = this.FindObjectPoistion(cAd, cCurWindow);
             var aSize = this.GetSize(cAd);
             // Get roughly the center of the point

@@ -1,5 +1,7 @@
-function MouseoverDetection(adElement) {
-    console.log(adElement);
+function MouseoverDetection(adElement, eventLog) {
+    
+    var self = this;
+    var eventLogger = eventLog;
     var startTime = new Date().getTime();
     var ad = adElement;
     var posFinder = new ElementPositionFinder();
@@ -8,9 +10,14 @@ function MouseoverDetection(adElement) {
     var adWidth = posFinder.GetWidth(ad);
     var adPosX = adPosition[1];
     var adPosY = adPosition[0];
-    var engaged = false;
-    var totalHoverTime = 0;
     var startHover = 0;
+    var clickPos = new Array();
+    var inHover = false;
+    var intervalId = null;
+    
+    self.engaged = false;
+    self.noClicks = 0;
+    self.totalHoverTime = 0;
     
     var checkIfChild = function(element) {
         while (element) {
@@ -25,18 +32,27 @@ function MouseoverDetection(adElement) {
     var mouseClick = function(event) {
         var curTime = new Date().getTime();
         var engageTime = curTime - startTime;
-        var x = event.clientX - adPosX;
-        var y = event.clientY - adPosY;
-        engaged = true;
-        console.log(x);
-        console.log(y);
-        console.log(engageTime);
+        var x = Math.floor(event.clientX - adPosX);
+        var y = Math.floor(event.clientY - adPosY);
+        self.engaged = true;
+        clickPos.push({"x": x, "y": y});
+        self.noClicks++;
+        
+        // Log the click
+        var eventData = {}
+        eventData[EventLog.NO_CLICKS] = self.noClicks;
+        eventData[EventLog.CLICK_X] = x;
+        eventData[EventLog.CLICK_Y] = y;
+        eventData[EventLog.ENGAGEMENT] = self.engaged;
+        eventData[EventLog.CLICK_TIME] = engageTime / 1000.0;
+        eventData[EventLog.EVENT_TYPE] = EventLog.TYPE_CLICK;
+        eventLogger.LogEvent(eventData);
     }
     
-    var mousePos = function(event) {
-        console.log(event.clientX)
-        console.log(event.clientY)
-    }
+//    var mousePos = function(event) {
+//        console.log(event.clientX)
+//        console.log(event.clientY)
+//    }
     
     var mouseover = function(event) {
         var curTime = new Date().getTime();
@@ -45,14 +61,26 @@ function MouseoverDetection(adElement) {
         if (checkIfChild(relatedElement)) {
             return;
         }
+        inHover = true;
         startHover = new Date().getTime();
-        engaged = true;
+        self.engaged = true;
+        intervalId = setInterval(function(){
+            if (inHover) {
+                var endHover = new Date().getTime();
+                if (startHover > 0 ) {
+                    var hoverTime = endHover - startHover;
+                    startHover = endHover;
+                    self.totalHoverTime += hoverTime;
+                }
+            }
+        }, 1000);
         
-        if (adElement.addEventListener) {
-            adElement.addEventListener("mousemove", mousePos, false);
-        } else {
-            adElement.attachEvent("onmousemove", mousePos);
-        }
+        // TODO: Sampling of mousemovements
+//        if (adElement.addEventListener) {
+//            adElement.addEventListener("mousemove", mousePos, false);
+//        } else {
+//            adElement.attachEvent("onmousemove", mousePos);
+//        }
     }
     
     var mouseout = function(event) {
@@ -62,22 +90,25 @@ function MouseoverDetection(adElement) {
         if (checkIfChild(relatedElement)) {
             return;
         }
-        endHover = new Date().getTime();
+        var endHover = new Date().getTime();
         if (startHover > 0 ) {
             var hoverTime = endHover - startHover;
             startHover = 0;
-            totalHoverTime += hoverTime;
-            console.log(hoverTime);
-            console.log(totalHoverTime);
-            
+            self.totalHoverTime += hoverTime;
         }
-        engaged = true;
+        inHover = false;
+        self.engaged = true;
+        if (intervalId !== null) {
+            clearInterval(intervalId);
+        }
+        intervalId = null;
         
-        if (adElement.removeEventListener) {
-            adElement.removeEventListener("mousemove", mousePos, false);
-        } else {
-            adElement.detachEvent("onmousemove", mousePos);
-        }
+        // TODO: Sampling of mousemovements
+//        if (adElement.removeEventListener) {
+//            adElement.removeEventListener("mousemove", mousePos, false);
+//        } else {
+//            adElement.detachEvent("onmousemove", mousePos);
+//        }
     }
     
     if (adElement.addEventListener) {

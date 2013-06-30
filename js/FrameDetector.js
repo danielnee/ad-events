@@ -34,6 +34,7 @@ function FrameDetector() {
         
         var ancestors = this.GetAncestors(cCurWindow);
         
+        // Standard check for Firefox, IE, Safari
         if (ancestors === null) {
              try {
                 var cTopWindow = cCurWindow.top;
@@ -48,8 +49,23 @@ function FrameDetector() {
             }
             return [cCurWindow, iCurDepth]
         }
+        // Ancestor based check Chrome
         else {
             // Cycle through ancestors until we are blocked
+            var curOrigin = cCurWindow.location.origin
+            var bestDepth = iCurDepth;
+            for (var i = ancestors.length - 1; i >= 0; i--) {
+                if (ancestors[i] == curOrigin) {
+                    bestDepth = i;
+                }
+            }
+            
+            // Now take the highest ancestor
+            while (iCurDepth != bestDepth) {
+                iCurDepth--;
+                cCurWindow = cCurWindow.parent;
+            }
+            return [cCurWindow, iCurDepth];
         }
        
     }
@@ -60,8 +76,17 @@ function FrameDetector() {
      * @param window cTopWindow The top most window
      * @param int iCurDepth Depth of window highest reachable window
      */
-    this.SearchTopDownReachable = function(cTopWindow, iCurWindowDepth) {
+    this.SearchTopDownReachable = function(cTopWindow, iCurWindowDepth, cCurWindow) {
+        
         if (iCurWindowDepth == 0) {
+            return [null, -1];
+        }
+        
+        var ancestors = this.GetAncestors(cCurWindow);
+        // Check for Chrome
+        if (ancestors !== null) {
+            // At the moment no way to stop this code throwing errors in the log
+            // so don't run this detection in Chrome
             return [null, -1];
         }
         
@@ -127,68 +152,4 @@ function FrameDetector() {
         }
         return ancestors;
     }
-    
-    this.TopWindowTest = function(cCurWindow) {
-        var topElement = "Unknown";
-        var ffBug = "Unknown";
-        try {
-            topElement = cCurWindow.parent.parent.parent.parent.parent.parent.parent.parent.parent.parent.location.href;
-        } catch (cException) {
-            var message = cException.message;
-            var domain = message.substring(message.lastIndexOf("<") + 1, message.lastIndexOf(">"));
-            if (typeof domain != UNDEFINED && this.CheckFirefoxVersionForBug()) {
-                ffBug = domain;
-            }
-        }
-        return [topElement, ffBug];
-    }
-    
-    this.CheckFirefoxVersionForBug = function() {
-        var bugMajorVersion = 3;
-        var bugMinorVersion = 6;
-        var bugRevision = 13;
-        var isBuggedVersion = false;
-        
-        if (typeof window.navigator !== UNDEFINED && typeof window.navigator.userAgent !== UNDEFINED) {
-            
-            //var userAgent = window.navigator.userAgent;
-            var firefoxVersionNumber = window.navigator.userAgent.match(/Firefox\/([\.0-9]+)/);
-            if (firefoxVersionNumber !== null && firefoxVersionNumber.length == 2) {
-                firefoxVersionNumber = firefoxVersionNumber[1].split(".");
-                var majorVersion = parseInt(firefoxVersionNumber[0]);
-                if (majorVersion == bugMajorVersion) {
-                    var minorVersion = parseInt(firefoxVersionNumber[1]);
-                    if (minorVersion < bugMinorVersion) {
-                        isBuggedVersion = true;
-                    }
-                    else if (minorVersion == bugMinorVersion) {
-                        if (firefoxVersionNumber.length == 3) {
-                            var revisionNumber = parseInt(firefoxVersionNumber[2]);
-                            if (revisionNumber <= bugRevision) {
-                                isBuggedVersion = true;
-                            }
-                        } else {
-                            isBuggedVersion = true;
-                        }
-                    }
-                }
-            }
-        }
-        return isBuggedVersion;
-    }
 }
-
-
-// Advertiser
-// Campaign
-// Placement
-// Creative
-// Site
-// Channel
-// Publisher/Ad Network
-// Agency
-
-// Cachebust or version
-// Callback
-
-

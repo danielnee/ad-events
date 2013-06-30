@@ -34,8 +34,6 @@ package {
             this.addEventListener(Event.ENTER_FRAME, updateFrameRate);
             ExternalInterface.addCallback("currentFrameRate", currentFrameRate);
             ExternalInterface.addCallback("isVisible", isVisible);
-            ExternalInterface.addCallback("secondsInView", secondsInView);
-            ExternalInterface.addCallback("totalTime", totalTime);
 		}
 
         private function updateFrameRate(e : Event) : void {
@@ -60,14 +58,6 @@ package {
          
          public function isVisible() : Boolean {
             return fps >= INVIS_FRAME_RATE;
-         }
-
-         public function secondsInView() : Number {
-            return millisecondsInView / 1000;
-         }
-
-         public function totalTime() : Number {
-            return totalMilliseconds / 1000;
          }
     }
 }

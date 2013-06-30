@@ -76,7 +76,7 @@ function BrowserDetection() {
      * Find the screen width and height
      */
     this.ScreenSize = function() {
-        return [screen.availHeight, screen.availWidth];
+        return [screen.availWidth, screen.availHeight];
     }
     
     /**
