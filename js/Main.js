@@ -20,9 +20,7 @@ contentLoaded(window, function() {
     eventLog.RegisterPlacementData(placementData);
  
     // (2) Create the status count
-    var statusNo = 0;
-    
-   
+    var statusNo = 0;   
     
     // (2) Create the flash viewability
     var adParent = adElement.parentNode;

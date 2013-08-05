@@ -21,18 +21,7 @@ function PageGenerator(iIframeDepth, bSameDomain, bAltFrame) {
             $("body").append(this.CreateIframe(sPage));
         }
         else {
-            $("body").append("<script src=\"js/Common.js\"></script>");
-            $("body").append("<script src=\"js/FlashDetect.js\"></script>");
-            $("body").append("<script src=\"js/BrowserDetection.js\"></script>");
-            $("body").append("<script src=\"js/FrameDetector.js\"></script>");
-            $("body").append("<script src=\"js/ElementPositionFinder.js\"></script>");
-            $("body").append("<script src=\"js/BlockedPositionFinder.js\"></script>");
-            $("body").append("<script src=\"js/swfobject.js\"></script>");
-            $("body").append("<script src=\"js/FlashVisibilityDetector.js\"></script>");
-            $("body").append("<script src=\"js/MouseoverDetection.js\"></script>");
-            $("body").append("<script src=\"js/ContentLoaded.js\"></script>");
-            $("body").append("<script src=\"js/EventLog.js\"></script>");            
-            $("body").append("<script src=\"js/Main.js\"></script>");
+            $("body").append("<script src=\"//cdn.adamity.com/adamity.js\"></script>");
             $("body").append("<img src=\"img/lena.png\" height=\"300\" width=\"250\"> ");
         }
         

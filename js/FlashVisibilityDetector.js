@@ -7,7 +7,7 @@ function FlashVisibilityDetector() {
         element.id = id;
         parentElement.appendChild(element);
         
-        var src = "http://false-domain-1.com/UrlExtractor/as/FrameRateDetector.swf?t=" + cachebust;
+        var src = SWF_URL;
         var leftOffset = Math.floor(parentWidth / 2);
         var topOffset = Math.floor(parentHeight / 2);
      

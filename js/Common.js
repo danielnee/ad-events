@@ -1,4 +1,6 @@
 var UNDEFINED = "undefined";
+var EVENT_URL = "//event.adamity.com/event.gif";
+var SWF_URL = "//cdn.adamity.com/FrameRateDetector.swf"
 
 Object.extend = function(destination, source) {
     for (var property in source) {

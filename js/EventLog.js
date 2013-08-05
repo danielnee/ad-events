@@ -1,6 +1,5 @@
 function EventLog(adElement) {
     
-    var url = "http://event.adserver.com/event.gif"
     var sesssionId = Math.floor(Math.random() * 9007199254740992)
     var item = 0;
     var placementData = {};
@@ -56,7 +55,7 @@ function EventLog(adElement) {
     var CreateBasicEventUrl = function() {
         var cachebust = new Date().getTime();
         
-        return url + "?" + CreateKeyValue(EventLog.SESSION_ID, sesssionId) + "&" + CreateKeyValue(EventLog.CACHEBUST, cachebust) + "&" + CreateKeyValue(EventLog.ITEM_NO, item);
+        return EVENT_URL + "?" + CreateKeyValue(EventLog.SESSION_ID, sesssionId) + "&" + CreateKeyValue(EventLog.CACHEBUST, cachebust) + "&" + CreateKeyValue(EventLog.ITEM_NO, item);
     }
     
     var CreateKeyValue = function(key, value) {
