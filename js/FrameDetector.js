@@ -147,6 +147,16 @@ function FrameDetector() {
      */
     this.GetAncestors = function(cCurWindow) {
         var ancestors = cCurWindow.location.ancestorOrigins;
+        
+        if (ancestors instanceof DOMStringList) {
+            // Convert to standard array
+            var arrayAncestors = new Array();
+            for (var i = 0; i < ancestors.length; i++) {
+                arrayAncestors[i] = ancestors.item(i).toString()
+            }
+            ancestors = arrayAncestors;
+        }
+        
         if (ancestors === undefined) {
             ancestors = null;
         }

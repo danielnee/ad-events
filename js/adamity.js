@@ -1,4 +1,5 @@
-var UNDEFINED = "undefined";
+(function () {var UNDEFINED = "undefined";
+var SCRIPT_URL = "cdn.adamity.com/adamity.js"
 var EVENT_URL = "//event.adamity.com/event.gif";
 var SWF_URL = "//cdn.adamity.com/FrameRateDetector.swf"
 
@@ -437,6 +438,16 @@ BrowserDetection.IE_VERSION_UNKNOWN = "Unknown";function FrameDetector() {
      */
     this.GetAncestors = function(cCurWindow) {
         var ancestors = cCurWindow.location.ancestorOrigins;
+        
+        if (ancestors instanceof DOMStringList) {
+            // Convert to standard array
+            var arrayAncestors = new Array();
+            for (var i = 0; i < ancestors.length; i++) {
+                arrayAncestors[i] = ancestors.item(i).toString()
+            }
+            ancestors = arrayAncestors;
+        }
+        
         if (ancestors === undefined) {
             ancestors = null;
         }
@@ -637,6 +648,20 @@ BrowserDetection.IE_VERSION_UNKNOWN = "Unknown";function FrameDetector() {
     }
     
     /**
+     * Find our script, provide the script element and src back
+     */
+    this.FindScript = function() {
+      var scriptElements = document.getElementsByTagName("script");  
+      for (var i = 0; i < scriptElements.length; i++) {
+          var src = scriptElements[i].src
+          if (src.indexOf(SCRIPT_URL) >= 0) {
+              return [scriptElements[i], src]
+          }
+      }
+      return null;
+    }
+    
+    /**
      * Attempts to find the ad element
      * @param cElement An element belived to enclose the ad
      */
@@ -766,7 +791,7 @@ var swfobject=function(){var D="undefined",r="object",S="Shockwave Flash",W="Sho
            wmode : "transparent"
         };
         var params = {};
-        var attributes = {};
+        var attributes = {"allowscriptaccess" : "always"};
 
         
         swfobject.embedSWF(src, id, 1, 1, "10.0.1" ,"expressInstall.swf", flashvars, params, attributes); 
@@ -997,6 +1022,39 @@ function contentLoaded(win, fn) {
         item++;
     }
     
+    this.ParsePlacementArgumentsFromUrl = function(url) {
+        var queryStringPos = url.indexOf("?")
+        if (queryStringPos == -1)
+            return {};
+        
+        var queryString = url.substring(queryStringPos + 1)
+        var queryStringSplit = queryString.split("&")
+        var queryParams = new Array();
+        for (var i = 0; i < queryStringSplit.length; i++) {
+            var keyVal = queryStringSplit[i].split("=")
+            var key = decodeURIComponent(keyVal[0]);
+            var val = "";
+            if (keyVal.length > 1)
+                val = decodeURIComponent(keyVal[1]);
+            
+            queryParams[key] = val;
+        }
+        
+        // Construct the placement parameters
+        var placementData = new Array();
+        if (queryParams.hasOwnProperty(EventLog.ADVERTISER)) placementData[EventLog.ADVERTISER] = queryParams[EventLog.ADVERTISER];
+        if (queryParams.hasOwnProperty(EventLog.CAMPAIGN)) placementData[EventLog.CAMPAIGN] = queryParams[EventLog.CAMPAIGN];
+        if (queryParams.hasOwnProperty(EventLog.PLACEMENT)) placementData[EventLog.PLACEMENT] = queryParams[EventLog.PLACEMENT];
+        if (queryParams.hasOwnProperty(EventLog.CREATIVE)) placementData[EventLog.CREATIVE] = queryParams[EventLog.CREATIVE];
+        if (queryParams.hasOwnProperty(EventLog.PUB_SITE)) placementData[EventLog.PUB_SITE] = queryParams[EventLog.PUB_SITE];
+        if (queryParams.hasOwnProperty(EventLog.CHANNEL)) placementData[EventLog.CHANNEL] = queryParams[EventLog.CHANNEL];
+        if (queryParams.hasOwnProperty(EventLog.PUBLISHER)) placementData[EventLog.PUBLISHER] = queryParams[EventLog.PUBLISHER];
+        if (queryParams.hasOwnProperty(EventLog.AGENCY)) placementData[EventLog.AGENCY] = queryParams[EventLog.AGENCY];
+        if (queryParams.hasOwnProperty(EventLog.AGENCY)) placementData[EventLog.AGENCY] = queryParams[EventLog.AGENCY];
+        
+        return placementData;
+    }
+    
     var FireEvent = function(event) {
         var img = document.createElement("img");
         img.src = event;
@@ -1012,8 +1070,7 @@ function contentLoaded(win, fn) {
     }
     
     var CreateKeyValue = function(key, value) {
-        return key + "=" + 
-encodeURIComponent(value);
+        return key + "=" + encodeURIComponent(value);
     }
 }
 
@@ -1029,7 +1086,7 @@ EventLog.PLACEMENT = "pplace";
 EventLog.CREATIVE = "pcreative";
 EventLog.PUB_SITE = "ppubsite";
 EventLog.CHANNEL = "pchannel";
-EventLog.PUBLISHER = "pub";
+EventLog.PUBLISHER = "ppub";
 EventLog.AGENCY = "pagency";
 EventLog.EVENT_TYPE = "action";
 
@@ -1081,25 +1138,26 @@ EventLog.TYPE_IMPRESSION = "imp";
 EventLog.TYPE_CLICK = "click";
 EventLog.TYPE_STATUS = "status";
     
-EventLog.MAX_URL_LENGTH = 2000;var placementData = {
-    "padv" : "1",
-    "pcamp" : "2",
-    "pplace" : "3",
-    "pcreative" : "4",
-    "ppubsite" : "5",
-    "pchannel" : "6",
-    "pub" : "7",
-    "pagency" : "8"
-};
-
-contentLoaded(window, function() {
+EventLog.MAX_URL_LENGTH = 2000;contentLoaded(window, function() {
     
      // (1) Find the ad
     var posFinder = new ElementPositionFinder();
-    var adElement = posFinder.FindAd(document.body); // TODO: This should be changed to script parent
+    var script = posFinder.FindScript()
+    
+    // If our scrupt is not find, default to document body
+    if (script == null) {
+        script = [document.body, ""];
+    }
+    
+    var scriptParent = script[0].parentNode;
+    var adElement = posFinder.FindAd(scriptParent);
     
     // (1) Create the event logger
     var eventLog = new EventLog(adElement);
+    
+    // Parse the placement data from the script source
+    var placementData = eventLog.ParsePlacementArgumentsFromUrl(script[1]) 
+
     eventLog.RegisterPlacementData(placementData);
  
     // (2) Create the status count
@@ -1142,7 +1200,7 @@ contentLoaded(window, function() {
                 return posFinder.IsVisible(curVisiblePercent);
             }
                         
-            // Run initial BTF detection
+            // TODO: Run initial BTF detection
         }
         else if (browser == BrowserDetection.FIREFOX) {
             // Firefox allows us to compute visiblilty across iframes
@@ -1325,3 +1383,4 @@ contentLoaded(window, function() {
     setTimeout(pollFlash, 100);
 })
 
+})(); var a = new Array(); console.log(a.size());

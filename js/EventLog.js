@@ -44,6 +44,39 @@ function EventLog(adElement) {
         item++;
     }
     
+    this.ParsePlacementArgumentsFromUrl = function(url) {
+        var queryStringPos = url.indexOf("?")
+        if (queryStringPos == -1)
+            return {};
+        
+        var queryString = url.substring(queryStringPos + 1)
+        var queryStringSplit = queryString.split("&")
+        var queryParams = new Array();
+        for (var i = 0; i < queryStringSplit.length; i++) {
+            var keyVal = queryStringSplit[i].split("=")
+            var key = decodeURIComponent(keyVal[0]);
+            var val = "";
+            if (keyVal.length > 1)
+                val = decodeURIComponent(keyVal[1]);
+            
+            queryParams[key] = val;
+        }
+        
+        // Construct the placement parameters
+        var placementData = new Array();
+        if (queryParams.hasOwnProperty(EventLog.ADVERTISER)) placementData[EventLog.ADVERTISER] = queryParams[EventLog.ADVERTISER];
+        if (queryParams.hasOwnProperty(EventLog.CAMPAIGN)) placementData[EventLog.CAMPAIGN] = queryParams[EventLog.CAMPAIGN];
+        if (queryParams.hasOwnProperty(EventLog.PLACEMENT)) placementData[EventLog.PLACEMENT] = queryParams[EventLog.PLACEMENT];
+        if (queryParams.hasOwnProperty(EventLog.CREATIVE)) placementData[EventLog.CREATIVE] = queryParams[EventLog.CREATIVE];
+        if (queryParams.hasOwnProperty(EventLog.PUB_SITE)) placementData[EventLog.PUB_SITE] = queryParams[EventLog.PUB_SITE];
+        if (queryParams.hasOwnProperty(EventLog.CHANNEL)) placementData[EventLog.CHANNEL] = queryParams[EventLog.CHANNEL];
+        if (queryParams.hasOwnProperty(EventLog.PUBLISHER)) placementData[EventLog.PUBLISHER] = queryParams[EventLog.PUBLISHER];
+        if (queryParams.hasOwnProperty(EventLog.AGENCY)) placementData[EventLog.AGENCY] = queryParams[EventLog.AGENCY];
+        if (queryParams.hasOwnProperty(EventLog.AGENCY)) placementData[EventLog.AGENCY] = queryParams[EventLog.AGENCY];
+        
+        return placementData;
+    }
+    
     var FireEvent = function(event) {
         var img = document.createElement("img");
         img.src = event;
@@ -59,8 +92,7 @@ function EventLog(adElement) {
     }
     
     var CreateKeyValue = function(key, value) {
-        return key + "=" + 
-encodeURIComponent(value);
+        return key + "=" + encodeURIComponent(value);
     }
 }
 
@@ -76,7 +108,7 @@ EventLog.PLACEMENT = "pplace";
 EventLog.CREATIVE = "pcreative";
 EventLog.PUB_SITE = "ppubsite";
 EventLog.CHANNEL = "pchannel";
-EventLog.PUBLISHER = "pub";
+EventLog.PUBLISHER = "ppub";
 EventLog.AGENCY = "pagency";
 EventLog.EVENT_TYPE = "action";
 

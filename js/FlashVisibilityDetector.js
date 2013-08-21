@@ -20,7 +20,7 @@ function FlashVisibilityDetector() {
            wmode : "transparent"
         };
         var params = {};
-        var attributes = {};
+        var attributes = {"allowscriptaccess" : "always"};
 
         
         swfobject.embedSWF(src, id, 1, 1, "10.0.1" ,"expressInstall.swf", flashvars, params, attributes); 

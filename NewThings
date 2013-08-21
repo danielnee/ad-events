@@ -2,8 +2,14 @@
 
 -- Finding other scripts and providing src
 -- Reasons for offscreen (scrolled out of view, obstructed, invisible, tabbed out, positioned offscreen, positioned invisible manner)
-- Cookie setting 
 
+- Wrapping in scope
+- Add last event flag
+- Remove function names from flash code, rename file
+- Fix firefox error
+- Fire basic event first?
+- Surrond everything in try catch
+- Debug mode?
 
 
 // Advertiser/Client

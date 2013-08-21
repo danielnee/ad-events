@@ -21,9 +21,9 @@ sudo mkdir -p /usr/adamity; \
 sudo chown $USER /usr/adamity; \
 chgrp $USER /usr/adamity; \
 mkdir -p /usr/adamity/cdn; \
-chmod a-r /usr/adamity/cdn; \
+chmod a+r /usr/adamity/cdn; \
 mkdir -p /usr/adamity/event; \
-chmod a-r /usr/adamity/event'
+chmod a+r /usr/adamity/event'
 
 # Event GIF
 scp -i $KEY_PAIR ../img/event.gif $USER@$SERVER:/usr/adamity/event

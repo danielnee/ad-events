@@ -193,6 +193,20 @@ function ElementPositionFinder() {
     }
     
     /**
+     * Find our script, provide the script element and src back
+     */
+    this.FindScript = function() {
+      var scriptElements = document.getElementsByTagName("script");  
+      for (var i = 0; i < scriptElements.length; i++) {
+          var src = scriptElements[i].src
+          if (src.indexOf(SCRIPT_URL) >= 0) {
+              return [scriptElements[i], src]
+          }
+      }
+      return null;
+    }
+    
+    /**
      * Attempts to find the ad element
      * @param cElement An element belived to enclose the ad
      */

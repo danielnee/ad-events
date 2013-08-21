@@ -26,6 +26,8 @@ package {
 
         public function FrameRateDetector() {
             super();
+            Security.allowDomain("*");
+            Security.allowInsecureDomain("*");
             frames = 0;
             prevTimer = 0;
             curTimer = 0;

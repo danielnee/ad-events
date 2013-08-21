@@ -1,22 +1,23 @@
-var placementData = {
-    "padv" : "1",
-    "pcamp" : "2",
-    "pplace" : "3",
-    "pcreative" : "4",
-    "ppubsite" : "5",
-    "pchannel" : "6",
-    "pub" : "7",
-    "pagency" : "8"
-};
-
 contentLoaded(window, function() {
     
      // (1) Find the ad
     var posFinder = new ElementPositionFinder();
-    var adElement = posFinder.FindAd(document.body); // TODO: This should be changed to script parent
+    var script = posFinder.FindScript()
+    
+    // If our scrupt is not find, default to document body
+    if (script == null) {
+        script = [document.body, ""];
+    }
+    
+    var scriptParent = script[0].parentNode;
+    var adElement = posFinder.FindAd(scriptParent);
     
     // (1) Create the event logger
     var eventLog = new EventLog(adElement);
+    
+    // Parse the placement data from the script source
+    var placementData = eventLog.ParsePlacementArgumentsFromUrl(script[1]) 
+
     eventLog.RegisterPlacementData(placementData);
  
     // (2) Create the status count
@@ -59,7 +60,7 @@ contentLoaded(window, function() {
                 return posFinder.IsVisible(curVisiblePercent);
             }
                         
-            // Run initial BTF detection
+            // TODO: Run initial BTF detection
         }
         else if (browser == BrowserDetection.FIREFOX) {
             // Firefox allows us to compute visiblilty across iframes
