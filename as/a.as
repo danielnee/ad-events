@@ -8,7 +8,7 @@ package {
     import flash.system.Security;
 
     [SWF( frameRate="30", width="1", height="1" )]
-    public class FrameRateDetector extends Sprite {
+    public class a extends Sprite {
       
         private var frames : int;
 
@@ -24,7 +24,7 @@ package {
 
         private static const INVIS_FRAME_RATE : Number = 14.0; 
 
-        public function FrameRateDetector() {
+        public function a() {
             super();
             Security.allowDomain("*");
             Security.allowInsecureDomain("*");
@@ -34,8 +34,8 @@ package {
             totalMilliseconds = 0;
             millisecondsInView = 0;
             this.addEventListener(Event.ENTER_FRAME, updateFrameRate);
-            ExternalInterface.addCallback("currentFrameRate", currentFrameRate);
-            ExternalInterface.addCallback("isVisible", isVisible);
+            ExternalInterface.addCallback("b", currentFrameRate);
+            ExternalInterface.addCallback("c", isVisible);
 		}
 
         private function updateFrameRate(e : Event) : void {

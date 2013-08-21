@@ -30,7 +30,7 @@ scp -i $KEY_PAIR ../img/event.gif $USER@$SERVER:/usr/adamity/event
 
 # Javascript and flash on cdn
 scp -i $KEY_PAIR ../js/adamity.js $USER@$SERVER:/usr/adamity/cdn
-scp -i $KEY_PAIR ../as/FrameRateDetector.swf $USER@$SERVER:/usr/adamity/cdn
+scp -i $KEY_PAIR ../as/a.swf $USER@$SERVER:/usr/adamity/cdn
 
 # Apache configuration
 scp -i $KEY_PAIR ../conf/adamity.conf $USER@$SERVER:/tmp

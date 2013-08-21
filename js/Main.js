@@ -17,8 +17,12 @@ contentLoaded(window, function() {
     
     // Parse the placement data from the script source
     var placementData = eventLog.ParsePlacementArgumentsFromUrl(script[1]) 
-
     eventLog.RegisterPlacementData(placementData);
+    
+    var eventData = {};
+    eventData[EventLog.EVENT_TYPE] = EventLog.TYPE_IMPRESSION;
+    // Fire the impression event
+    eventLog.LogEvent(eventData);
  
     // (2) Create the status count
     var statusNo = 0;   
@@ -65,6 +69,9 @@ contentLoaded(window, function() {
         else if (browser == BrowserDetection.FIREFOX) {
             // Firefox allows us to compute visiblilty across iframes
             visibleDetector = function() {
+                // This appears to cause an error in firebug log by accessing screenX too 
+                // quickly. Nothing that we can do about it 
+                
                 var curVisiblePercent = blockedDetector.ComputeVisibility(topWindow, function(){return blockedDetector.FirefoxWindowPosition(topWindow)});
                 return posFinder.IsVisible(curVisiblePercent);
             }           
@@ -109,7 +116,7 @@ contentLoaded(window, function() {
             flashLastTime = currentTime;
             // Assume the visibily state is true for this time period
             flashTotalTime += elapsedTime;
-            if (flashElement.isVisible() === true) {
+            if (flashElement.c() === true) {
                 flashVisibleTime += elapsedTime;
             }
             setTimeout(runFlashVis, 200)
@@ -167,7 +174,7 @@ contentLoaded(window, function() {
         }
               
         var eventData = {};
-        eventData[EventLog.EVENT_TYPE] = EventLog.TYPE_IMPRESSION;
+        eventData[EventLog.EVENT_TYPE] = EventLog.TYPE_STATUS;
         eventData[EventLog.AD_DEPTH] = adFrameDepth;
         eventData[EventLog.TOP_WINDOW_DEPTH] = topDepth;
         eventData[EventLog.TOP_URL] = topUrl;
@@ -203,8 +210,12 @@ contentLoaded(window, function() {
         
         eventLog.LogEvent(eventData);
         
-        var logStatus = function() {
-            var eventData = {}
+        var logStatus = function(last) {
+            if (typeof last == UNDEFINED) {
+                last = "false";
+            }
+            
+            var eventData = {};
             eventData[EventLog.EVENT_TYPE] = EventLog.TYPE_STATUS;
             eventData[EventLog.NO_CLICKS] = mouseDetect.noClicks;
             eventData[EventLog.ENGAGEMENT] = mouseDetect.engaged;
@@ -213,6 +224,7 @@ contentLoaded(window, function() {
             eventData[EventLog.GEOMETRIC_VISIBILITY_VISIBLE_TIME] = geometricVisibleTime;
             eventData[EventLog.FLASH_VISIBILITY_TOTAL_TIME] = flashTotalTime;
             eventData[EventLog.FLASH_VISIBILITY_VISIBLE_TIME] = flashVisibleTime;
+            eventData[EventLog.LAST_EVENT] = last;
             eventLog.LogEvent(eventData);
             statusNo++;
             
@@ -223,16 +235,16 @@ contentLoaded(window, function() {
         logStatus();
         
         if (window.addEventListener) {
-            window.addEventListener("unload", logStatus, false);
+            window.addEventListener("unload", function() { logStatus("true"); }, false);
         } else {
-            window.attachEvent("onunload", logStatus);
+            window.attachEvent("onunload", function() { logStatus("true"); });
         }
     }
     
     // (3) Poll the flash element to check when it is ready to report 
     var pollFlash = function() {
-        if (typeof flashElement.isVisible === "function"
-    && !isNaN(flashElement.currentFrameRate())) {
+        if (typeof flashElement.c === "function"
+    && !isNaN(flashElement.b())) {
             runDetection();
         }
         else {

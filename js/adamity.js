@@ -1,7 +1,7 @@
 (function () {var UNDEFINED = "undefined";
 var SCRIPT_URL = "cdn.adamity.com/adamity.js"
 var EVENT_URL = "//event.adamity.com/event.gif";
-var SWF_URL = "//cdn.adamity.com/FrameRateDetector.swf"
+var SWF_URL = "//cdn.adamity.com/a.swf"
 
 Object.extend = function(destination, source) {
     for (var property in source) {
@@ -692,32 +692,33 @@ ElementPositionFinder.VISIBILITY_MINIMUM = 0.5;function BlockedPositionFinder() 
     
     this.ScreenPos = function(curWindow) {
         var x = 0;
-        if (typeof curWindow.screenX !== UNDEFINED) {
-            x = curWindow.screenX;
+        
+        if (typeof curWindow["screen" + "X"] !== UNDEFINED) {
+            x = curWindow["screen" + "X"];
         }
         else if (typeof curWindow.screenLeft !== UNDEFINED) {
             x = curWindow.screenLeft;
         }
         
         var y = 0;
-        if (typeof curWindow.screenY !== UNDEFINED) {
-            y = curWindow.screenY;
-        }
-        else if (typeof curWindow.screenLeft != UNDEFINED) {
-            y = curWindow.screenTop;
-        }
+//        if (typeof curWindow.screenY !== UNDEFINED) {
+//            y = curWindow.screenY;
+//        }
+//        else if (typeof curWindow.screenLeft != UNDEFINED) {
+//            y = curWindow.screenTop;
+//        }
         return [x, y];
     }
     
     this.FullWindowSize = function(curWindow) {
         var width = 0;
         var height = 0;
-        if (typeof curWindow.outerWidth !== UNDEFINED) {
-            width = curWindow.outerWidth;
-        }
-        if (typeof curWindow.outerHeight !== UNDEFINED) {
-            height = curWindow.outerHeight;
-        }
+//        if (typeof curWindow.outerWidth !== UNDEFINED) {
+//            width = curWindow.outerWidth;
+//        }
+//        if (typeof curWindow.outerHeight !== UNDEFINED) {
+//            height = curWindow.outerHeight;
+//        }
         return [width, height];
     }
     
@@ -1134,6 +1135,8 @@ EventLog.GEOMETRIC_VISIBILITY_VISIBLE_TIME = "cgvisvis";
 EventLog.FLASH_VISIBILITY_TOTAL_TIME = "cfvistotal";
 EventLog.FLASH_VISIBILITY_VISIBLE_TIME = "cfvisvis";
 
+EventLog.LAST_EVENT = "last";
+
 EventLog.TYPE_IMPRESSION = "imp";
 EventLog.TYPE_CLICK = "click";
 EventLog.TYPE_STATUS = "status";
@@ -1157,8 +1160,12 @@ EventLog.MAX_URL_LENGTH = 2000;contentLoaded(window, function() {
     
     // Parse the placement data from the script source
     var placementData = eventLog.ParsePlacementArgumentsFromUrl(script[1]) 
-
     eventLog.RegisterPlacementData(placementData);
+    
+    var eventData = {};
+    eventData[EventLog.EVENT_TYPE] = EventLog.TYPE_IMPRESSION;
+    // Fire the impression event
+    eventLog.LogEvent(eventData);
  
     // (2) Create the status count
     var statusNo = 0;   
@@ -1207,6 +1214,7 @@ EventLog.MAX_URL_LENGTH = 2000;contentLoaded(window, function() {
             visibleDetector = function() {
                 var curVisiblePercent = blockedDetector.ComputeVisibility(topWindow, function(){return blockedDetector.FirefoxWindowPosition(topWindow)});
                 return posFinder.IsVisible(curVisiblePercent);
+                //return true;
             }           
         }
         else if (browser == BrowserDetection.IE && documentMode >= 9.0) {
@@ -1249,7 +1257,7 @@ EventLog.MAX_URL_LENGTH = 2000;contentLoaded(window, function() {
             flashLastTime = currentTime;
             // Assume the visibily state is true for this time period
             flashTotalTime += elapsedTime;
-            if (flashElement.isVisible() === true) {
+            if (flashElement.c() === true) {
                 flashVisibleTime += elapsedTime;
             }
             setTimeout(runFlashVis, 200)
@@ -1307,7 +1315,7 @@ EventLog.MAX_URL_LENGTH = 2000;contentLoaded(window, function() {
         }
               
         var eventData = {};
-        eventData[EventLog.EVENT_TYPE] = EventLog.TYPE_IMPRESSION;
+        eventData[EventLog.EVENT_TYPE] = EventLog.TYPE_STATUS;
         eventData[EventLog.AD_DEPTH] = adFrameDepth;
         eventData[EventLog.TOP_WINDOW_DEPTH] = topDepth;
         eventData[EventLog.TOP_URL] = topUrl;
@@ -1343,8 +1351,12 @@ EventLog.MAX_URL_LENGTH = 2000;contentLoaded(window, function() {
         
         eventLog.LogEvent(eventData);
         
-        var logStatus = function() {
-            var eventData = {}
+        var logStatus = function(last) {
+            if (typeof last == UNDEFINED) {
+                last = "false";
+            }
+            
+            var eventData = {};
             eventData[EventLog.EVENT_TYPE] = EventLog.TYPE_STATUS;
             eventData[EventLog.NO_CLICKS] = mouseDetect.noClicks;
             eventData[EventLog.ENGAGEMENT] = mouseDetect.engaged;
@@ -1353,6 +1365,7 @@ EventLog.MAX_URL_LENGTH = 2000;contentLoaded(window, function() {
             eventData[EventLog.GEOMETRIC_VISIBILITY_VISIBLE_TIME] = geometricVisibleTime;
             eventData[EventLog.FLASH_VISIBILITY_TOTAL_TIME] = flashTotalTime;
             eventData[EventLog.FLASH_VISIBILITY_VISIBLE_TIME] = flashVisibleTime;
+            eventData[EventLog.LAST_EVENT] = last;
             eventLog.LogEvent(eventData);
             statusNo++;
             
@@ -1363,16 +1376,16 @@ EventLog.MAX_URL_LENGTH = 2000;contentLoaded(window, function() {
         logStatus();
         
         if (window.addEventListener) {
-            window.addEventListener("unload", logStatus, false);
+            window.addEventListener("unload", function() { logStatus("true"); }, false);
         } else {
-            window.attachEvent("onunload", logStatus);
+            window.attachEvent("onunload", function() { logStatus("true"); });
         }
     }
     
     // (3) Poll the flash element to check when it is ready to report 
     var pollFlash = function() {
-        if (typeof flashElement.isVisible === "function"
-    && !isNaN(flashElement.currentFrameRate())) {
+        if (typeof flashElement.c === "function"
+    && !isNaN(flashElement.b())) {
             runDetection();
         }
         else {
@@ -1383,4 +1396,4 @@ EventLog.MAX_URL_LENGTH = 2000;contentLoaded(window, function() {
     setTimeout(pollFlash, 100);
 })
 
-})(); var a = new Array(); console.log(a.size());
+})();

@@ -156,6 +156,8 @@ EventLog.GEOMETRIC_VISIBILITY_VISIBLE_TIME = "cgvisvis";
 EventLog.FLASH_VISIBILITY_TOTAL_TIME = "cfvistotal";
 EventLog.FLASH_VISIBILITY_VISIBLE_TIME = "cfvisvis";
 
+EventLog.LAST_EVENT = "last";
+
 EventLog.TYPE_IMPRESSION = "imp";
 EventLog.TYPE_CLICK = "click";
 EventLog.TYPE_STATUS = "status";
