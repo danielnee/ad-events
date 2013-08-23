@@ -51,7 +51,7 @@ function EventLog(adElement) {
         
         var queryString = url.substring(queryStringPos + 1)
         var queryStringSplit = queryString.split("&")
-        var queryParams = new Array();
+        var queryParams = {};
         for (var i = 0; i < queryStringSplit.length; i++) {
             var keyVal = queryStringSplit[i].split("=")
             var key = decodeURIComponent(keyVal[0]);
@@ -63,7 +63,7 @@ function EventLog(adElement) {
         }
         
         // Construct the placement parameters
-        var placementData = new Array();
+        var placementData = {};
         if (queryParams.hasOwnProperty(EventLog.ADVERTISER)) placementData[EventLog.ADVERTISER] = queryParams[EventLog.ADVERTISER];
         if (queryParams.hasOwnProperty(EventLog.CAMPAIGN)) placementData[EventLog.CAMPAIGN] = queryParams[EventLog.CAMPAIGN];
         if (queryParams.hasOwnProperty(EventLog.PLACEMENT)) placementData[EventLog.PLACEMENT] = queryParams[EventLog.PLACEMENT];
@@ -157,9 +157,12 @@ EventLog.FLASH_VISIBILITY_TOTAL_TIME = "cfvistotal";
 EventLog.FLASH_VISIBILITY_VISIBLE_TIME = "cfvisvis";
 
 EventLog.LAST_EVENT = "last";
+EventLog.ERROR = "error";
 
 EventLog.TYPE_IMPRESSION = "imp";
 EventLog.TYPE_CLICK = "click";
 EventLog.TYPE_STATUS = "status";
+EventLog.TYPE_ERROR_MAIN = "errorMain";
+EventLog.TYPE_ERROR_INITIAL = "errorInitial";
     
 EventLog.MAX_URL_LENGTH = 2000;

@@ -22,9 +22,9 @@ function FlashVisibilityDetector() {
         var params = {};
         var attributes = {"allowscriptaccess" : "always"};
 
-        
+        swfobject.switchOffAutoHideShow();
         swfobject.embedSWF(src, id, 1, 1, "10.0.1" ,"expressInstall.swf", flashvars, params, attributes); 
-     swfobject.createCSS("#" + id, "position: absolute; width: 1px; height: 1px; z-index: -100; top: " + leftOffset + "px; left: " + topOffset + "px; opacity: 0");
+     swfobject.createCSS("#" + id, "position: absolute; width: 1px; height: 1px; z-index: -100; top: " + leftOffset + "px; left: " + topOffset + "px; visibility: hidden");
      return id
     }    
 }

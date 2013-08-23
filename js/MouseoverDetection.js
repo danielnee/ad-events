@@ -38,6 +38,8 @@ function MouseoverDetection(adElement, eventLog) {
         clickPos.push({"x": x, "y": y});
         self.noClicks++;
         
+        console.log("here");
+        
         // Log the click
         var eventData = {}
         eventData[EventLog.NO_CLICKS] = self.noClicks;
@@ -111,13 +113,15 @@ function MouseoverDetection(adElement, eventLog) {
 //        }
     }
     
+    //adElement = adElement.parentNode.parentNode;
+    console.log(adElement);
     if (adElement.addEventListener) {
         adElement.addEventListener("mouseover", mouseover, false);
         adElement.addEventListener("mouseout", mouseout, false);
-        adElement.addEventListener("click", mouseClick, false)
+        adElement.addEventListener("click", mouseClick, false);
     } else {
         adElement.attachEvent("onmouseover", mouseover);
         adElement.attachEvent("onmouseout", mouseout);
-        adElement.attachEvent("onclick", mouseClick)
+        adElement.attachEvent("onclick", mouseClick);
     }
 }

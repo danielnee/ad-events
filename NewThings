@@ -3,11 +3,12 @@
 -- Finding other scripts and providing src
 -- Reasons for offscreen (scrolled out of view, obstructed, invisible, tabbed out, positioned offscreen, positioned invisible manner)
 
-- Surrond everything in try catch
-- Pixel thing on SWF
+- Clicks in chrome on flash
 - Debug mode?
-
-
+- Firefox firebug error message relating to screenX
+- Code cleanup
+- Better testing
+- Minify and obsufaction
 
 // Advertiser/Client
 // Campaign
