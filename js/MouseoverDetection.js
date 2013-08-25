@@ -5,7 +5,7 @@ function MouseoverDetection(adElement, eventLog) {
     var startTime = new Date().getTime();
     var ad = adElement;
     var posFinder = new ElementPositionFinder();
-    var adPosition = posFinder.FindObjectPoistion(ad, window);
+    var adPosition = posFinder.FindObjectPosition(ad, window);
     var adHeight = posFinder.GetHeight(ad);
     var adWidth = posFinder.GetWidth(ad);
     var adPosX = adPosition[1];
@@ -37,8 +37,6 @@ function MouseoverDetection(adElement, eventLog) {
         self.engaged = true;
         clickPos.push({"x": x, "y": y});
         self.noClicks++;
-        
-        console.log("here");
         
         // Log the click
         var eventData = {}
@@ -113,8 +111,6 @@ function MouseoverDetection(adElement, eventLog) {
 //        }
     }
     
-    //adElement = adElement.parentNode.parentNode;
-    console.log(adElement);
     if (adElement.addEventListener) {
         adElement.addEventListener("mouseover", mouseover, false);
         adElement.addEventListener("mouseout", mouseout, false);

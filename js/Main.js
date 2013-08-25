@@ -45,8 +45,25 @@ contentLoaded(window, function() {
         // (2) Create the flash viewability
         var adParent = adElement.parentNode;
         var flashDetect = new FlashVisibilityDetector();
-        var flashId = flashDetect.CreateFlashElement(adParent, posFinder.GetWidth(adParent), posFinder.GetHeight(adParent));
-        var flashElement = document[flashId];
+        
+        var flashElement = null;
+        
+        // (3) Poll the flash element to check when it is ready to report 
+        var pollFlash = function() {
+            if (typeof flashElement.c === "function"
+        && !isNaN(flashElement.b())) {
+                runDetection();
+            }
+            else {
+                setTimeout(pollFlash, 100);
+            }
+        }
+        
+        var embedHandler = function (e){
+            flashElement = e.ref; //e.ref is a pointer to the <object>
+            setTimeout(pollFlash, 100);
+          };
+        var flashId = flashDetect.CreateFlashElement(adParent, posFinder.GetWidth(adParent), posFinder.GetHeight(adParent), embedHandler);
 
         var runDetection = function() {
             // (4) Find out our current frame depth
@@ -78,8 +95,6 @@ contentLoaded(window, function() {
                     var curVisiblePercent = posFinder.ComputeCurrentlyVisible(adElement, topWindow);
                     return posFinder.IsVisible(curVisiblePercent);
                 }
-
-                // TODO: Run initial BTF detection
             }
             else if (browser == BrowserDetection.FIREFOX) {
                 // Firefox allows us to compute visiblilty across iframes
@@ -254,20 +269,7 @@ contentLoaded(window, function() {
             } else {
                 window.attachEvent("onunload", function() { logStatus("true"); });
             }
-        }
-
-        // (3) Poll the flash element to check when it is ready to report 
-        var pollFlash = function() {
-            if (typeof flashElement.c === "function"
-        && !isNaN(flashElement.b())) {
-                runDetection();
-            }
-            else {
-                setTimeout(pollFlash, 100);
-            }
-        }
-
-        setTimeout(pollFlash, 100);
+        }    
     }
     catch (e) {
         // Handle errors that occur in the main detection code
@@ -276,6 +278,6 @@ contentLoaded(window, function() {
         eventData[EventLog.ERROR] = e.message;
         eventLog.LogEvent(eventData);
         return;
-    }
+   }
 })
 

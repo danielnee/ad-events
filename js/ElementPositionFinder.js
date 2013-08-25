@@ -1,8 +1,7 @@
 function ElementPositionFinder() {
-    
-    var cSelf = this;
  
-    this.FindObjectPoistion = function(cObj, cCurrentWindow) {
+    this.FindObjectPosition = function(cObj, cCurrentWindow) {
+        
         if (cObj.getBoundingClientRect) {
             return this.FindObjectPositionRect(cObj, cCurrentWindow)
         } else { // old browser
@@ -28,17 +27,15 @@ function ElementPositionFinder() {
     
     this.FindObjectPositionRect = function(cObj, cCurWindow) {
         var box = cObj.getBoundingClientRect();
-
         var body = cCurWindow.document.body;
         var docElem = cCurWindow.document.documentElement;
 	     
-
         var scroll =  this.GetPageScroll(cCurWindow);
-        var scrollTop = scroll[0];
-        var scrollLeft = scroll[1];
+        var scrollLeft = scroll[0];
+        var scrollTop = scroll[1];
 
         var clientTop = docElem.clientTop || body.clientTop || 0;
-        var clientLeft = docElem.clientLeft || body.clientLeft || 0
+        var clientLeft = docElem.clientLeft || body.clientLeft || 0;
 
         var top  = box.top +  scrollTop - clientTop
         var left = box.left + scrollLeft - clientLeft
@@ -46,8 +43,8 @@ function ElementPositionFinder() {
         return [ Math.round(top), Math.round(left) ]
     }
     
-    function ComputeVisible(cObj, cCurWindow, iCurScrollLeft, iCurScrollTop) {
-        var aPos = cSelf.FindObjectPosition(cObj, cCurWindow);
+    this.ComputeVisible = function(cObj, cCurWindow, iCurScrollLeft, iCurScrollTop) {
+        var aPos = this.FindObjectPosition(cObj, cCurWindow);   
         var iYPos = aPos[0];
         var iXPos = aPos[1];
         var iHeightViewport = this.GetViewportHeight(cCurWindow);
@@ -55,7 +52,7 @@ function ElementPositionFinder() {
         var iObjHeight = this.GetHeight(cObj);
         var iObjWidth = this.GetWidth(cObj);
         
-        return thisComputeVisiblePercent(iXPos, iYPos, iObjWidth, iObjHeight, iWidthViewport, iHeightViewport, iCurScrollLeft, iCurScrollTop);
+        return this.ComputeVisiblePercent(iXPos, iYPos, iObjWidth, iObjHeight, iWidthViewport, iHeightViewport, iCurScrollLeft, iCurScrollTop);
     }
     
     /**
@@ -106,12 +103,12 @@ function ElementPositionFinder() {
     }
     
     this.ComputeInitiallyVisible = function(cObj, cCurWindow) {
-        return ComputeVisible(cObj, cCurWindow, 0, 0)
+        return this.ComputeVisible(cObj, cCurWindow, 0, 0)
     }
     
     this.ComputeCurrentlyVisible = function(cObj, cCurWindow) {
         var curentScroll = this.GetPageScroll(cCurWindow)
-        return ComputeVisible(cObj, cCurWindow, curentScroll[0], curentScroll[1]);
+        return this.ComputeVisible(cObj, cCurWindow, curentScroll[0], curentScroll[1]);
     }
     
     this.IsVisible = function(visiblePercent) {
@@ -142,11 +139,13 @@ function ElementPositionFinder() {
     }
     
     this.GetWidth = function(cCurObj) {
-        return cCurObj.clientWidth;
+        var width = cCurObj.clientWidth;
+        return parseInt(width);
     }
     
     this.GetHeight = function(cCurObj) {
-        return cCurObj.clientHeight;
+        var height = cCurObj.clientHeight
+        return parseInt(height);
     }
     
     this.GetSize = function(cCurObj) {
@@ -179,7 +178,7 @@ function ElementPositionFinder() {
     this.CheckForObstruction = function(cAd, cCurWindow) {
         var bObstructed = false;
         if (typeof cCurWindow.document.elementFromPoint !== UNDEFINED) {
-            var aPos = this.FindObjectPoistion(cAd, cCurWindow);
+            var aPos = this.FindObjectPosition(cAd, cCurWindow);
             var aSize = this.GetSize(cAd);
             // Get roughly the center of the point
             var iCenterX = Math.floor(aPos[0] + (aSize[0] / 2));
@@ -229,6 +228,9 @@ function ElementPositionFinder() {
             }
         }
         
+//        if (cLargestObject.nodeName.toLowerCase() == "embed") {
+//            cLargestObject = cLargestObject.parentNode;
+//        }
         return cLargestObject;
     }
 }

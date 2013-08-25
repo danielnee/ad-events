@@ -9,6 +9,12 @@
 - Code cleanup
 - Better testing
 - Minify and obsufaction
+- Mouse over sampling
+- Current location and referrer -> Exchange detection
+- Robot cache check
+- Run initial BTF detection
+
+http://test.adamity.com/test.html?depth=4&sameDomain=false
 
 // Advertiser/Client
 // Campaign
