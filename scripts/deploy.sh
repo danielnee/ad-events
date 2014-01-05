@@ -47,6 +47,8 @@ scp -i $KEY_PAIR ../testAlt.html $USER@$SERVER:/usr/adamity/test/
 scp -i $KEY_PAIR ../ad.html $USER@$SERVER:/usr/adamity/test/
 scp -i $KEY_PAIR ../js/Page.js $USER@$SERVER:/usr/adamity/test/js/
 scp -i $KEY_PAIR ../js/PageGenerator.js $USER@$SERVER:/usr/adamity/test/js/
+scp -i $KEY_PAIR ../ietest.html $USER@$SERVER:/usr/adamity/test/
+scp -i $KEY_PAIR ../js/swfobject.js $USER@$SERVER:/usr/adamity/test/js/
 
 # Adamity homepage
 scp -i $KEY_PAIR ../index.html $USER@$SERVER:/usr/adamity/web/

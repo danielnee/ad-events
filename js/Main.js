@@ -1,4 +1,4 @@
-contentLoaded(window, function() {
+ready(function() {
     
     try {
         // (1) Find the ad
@@ -47,23 +47,36 @@ contentLoaded(window, function() {
         var flashDetect = new FlashVisibilityDetector();
         
         var flashElement = null;
+        var pollCount = 0;
         
         // (3) Poll the flash element to check when it is ready to report 
         var pollFlash = function() {
-            if (typeof flashElement.c === "function"
+            
+            if (pollCount >= 400 ) {
+                throw new Error("Flash poll exceeded limit");
+            }
+            else if (typeof flashElement.c === "function"
         && !isNaN(flashElement.b())) {
                 runDetection();
             }
             else {
+                pollCount++;
                 setTimeout(pollFlash, 100);
             }
         }
         
-        var embedHandler = function (e){
-            flashElement = e.ref; //e.ref is a pointer to the <object>
+        var embedHandler = function (e) {  
+            flashElement = e.ref;
             setTimeout(pollFlash, 100);
           };
-        var flashId = flashDetect.CreateFlashElement(adParent, posFinder.GetWidth(adParent), posFinder.GetHeight(adParent), embedHandler);
+          
+        // (5) Detect the browser being used
+        var browserDetect = new BrowserDetection();
+        var browser = browserDetect.DetectBrowser();
+        var ieVersion = browserDetect.DetectIEVersion(); // Ignore this variable if not IE
+        var documentMode = browserDetect.DetectDocumentMode();  // Ignore this variable if not IE  
+          
+        var flashId = flashDetect.CreateFlashElement(adParent, posFinder.GetWidth(adElement), posFinder.GetHeight(adElement), embedHandler, browser, ieVersion, documentMode );
 
         var runDetection = function() {
             // (4) Find out our current frame depth
@@ -79,12 +92,6 @@ contentLoaded(window, function() {
                 topDepth = altTopElement[1];
                 altDomainUsed = true;
             }
-
-            // (5) Detect the browser being used
-            var browserDetect = new BrowserDetection();
-            var browser = browserDetect.DetectBrowser();
-            var ieVersion = browserDetect.DetectIEVersion(); // Ignore this variable if not IE
-            var documentMode = browserDetect.DetectDocumentMode();  // Ignore this variable if not IE
 
             var visibleDetector = function() { return "UNABLE_TO_DETECT"};        
             var blockedDetector = new BlockedPositionFinder();
@@ -279,5 +286,5 @@ contentLoaded(window, function() {
         eventLog.LogEvent(eventData);
         return;
    }
-})
+});
 

@@ -1,0 +1,48 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+	<head>
+		<title>External Interface test</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+		<script type="text/javascript" src="js/swfobject.js"></script>
+		
+	</head>
+	<body>
+        <!--
+		<div id="myContent">
+			<h1>Alternative content</h1>
+			<p><a href="http://www.adobe.com/go/getflashplayer"><img src="http://www.adobe.com/images/shared/download_buttons/get_flash_player.gif" alt="Get Adobe Flash player" /></a></p>
+		</div>
+        -->
+		<p><label for="send">To Flash: </label><input type="text" id="send" name="send" maxlength="20" /><br /><button id="but1">ExternalInterface</button>
+            <script type="text/javascript">
+            
+        var element = document.createElement("div");
+        var id = "myContent";
+        element.id = id;
+        document.body.appendChild(element);
+            
+		var flashvars = {
+           play : "true",
+           loop : "true",
+           quality : "high",
+           allowscriptaccess: "always",
+           allowfullscreen : "false",
+           wmode : "transparent"
+        };
+		var params = {allowscriptaccess: "always" };
+		var attributes = { id:"myContent", name:"myContent" , allowscriptaccess: "always"};
+		swfobject.embedSWF("//cdn.adamity.com/a.swf", "myContent", "300", "120", "9.0.0", "expressInstall.swf", flashvars, params, attributes, callbackFn);
+		
+		function callbackFn(status) {
+			if (status.success) {
+				var obj = status.ref;
+				document.getElementById("but1").onclick = function() {
+					if (obj && typeof obj.b != "undefined") {
+						console.log(obj.b());
+					}
+				};
+			}
+		};
+		</script>
+	</body>
+</html>

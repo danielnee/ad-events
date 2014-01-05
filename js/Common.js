@@ -19,3 +19,12 @@ Object.size = function(obj) {
     }
     return size;
 };
+
+function getClass(obj) {
+  if (typeof obj === "undefined")
+    return "undefined";
+  if (obj === null)
+    return "null";
+  return Object.prototype.toString.call(obj)
+    .match(/^\[object\s(.*)\]$/)[1];
+}

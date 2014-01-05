@@ -144,7 +144,7 @@ function ElementPositionFinder() {
     }
     
     this.GetHeight = function(cCurObj) {
-        var height = cCurObj.clientHeight
+        var height = cCurObj.clientHeight;
         return parseInt(height);
     }
     

@@ -3,6 +3,7 @@
 -- Finding other scripts and providing src
 -- Reasons for offscreen (scrolled out of view, obstructed, invisible, tabbed out, positioned offscreen, positioned invisible manner)
 
+- Limit on poll flash loop
 - Clicks in chrome on flash
 - Debug mode?
 - Firefox firebug error message relating to screenX
@@ -13,6 +14,7 @@
 - Current location and referrer -> Exchange detection
 - Robot cache check
 - Run initial BTF detection
+- For geometric, might be worth measuring how far off screen
 
 http://test.adamity.com/test.html?depth=4&sameDomain=false
 

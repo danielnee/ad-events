@@ -148,7 +148,7 @@ function FrameDetector() {
     this.GetAncestors = function(cCurWindow) {
         var ancestors = cCurWindow.location.ancestorOrigins;
         
-        if (ancestors instanceof DOMStringList) {
+        if (getClass(ancestors) == "DOMStringList") {
             // Convert to standard array
             var arrayAncestors = new Array();
             for (var i = 0; i < ancestors.length; i++) {

@@ -69,7 +69,7 @@ function BrowserDetection() {
      * Detect IE version from document mode
      */
     this.DetectDocumentMode = function() {
-        return document && document.documentMode ? document.documentMode : BrowserDetection.IE_VERSION_UNKNOWN;
+        return document && document.documentMode ? parseFloat(document.documentMode) : BrowserDetection.IE_VERSION_UNKNOWN;
     }
     
     /**
