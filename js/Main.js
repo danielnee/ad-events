@@ -15,13 +15,18 @@ ready(function() {
 
         // (1) Create the event logger
         var eventLog = new EventLog(adElement);
-
         // Parse the placement data from the script source
         var placementData = eventLog.ParsePlacementArgumentsFromUrl(script[1]) 
         eventLog.RegisterPlacementData(placementData);
 
+        // Log the proper impression 
+        eventLog.LogImpression(placementData);
+
+        // Log the first status message
+        var flashVersion = new FlashDetect();
         var eventData = {};
         eventData[EventLog.EVENT_TYPE] = EventLog.TYPE_IMPRESSION;
+        eventData[EventLog.FLASH_AVAIL] = flashVersion.installed;
         // Fire the impression event
         eventLog.LogEvent(eventData);
     }
@@ -53,10 +58,10 @@ ready(function() {
         var pollFlash = function() {
             
             if (pollCount >= 400 ) {
-                throw new Error("Flash poll exceeded limit");
+                return;
             }
-            else if (typeof flashElement.c === "function"
-        && !isNaN(flashElement.b())) {
+            else if (flashVersion.installed == "false" || (typeof flashElement.c === "function"
+        && !isNaN(flashElement.b()))) {
                 runDetection();
             }
             else {
@@ -147,18 +152,21 @@ ready(function() {
                 runVis();
             }
 
-            var runFlashVis = function() {
-                var currentTime = new Date().getTime();
-                var elapsedTime = (currentTime - flashLastTime) / 1000.0;
-                flashLastTime = currentTime;
-                // Assume the visibily state is true for this time period
-                flashTotalTime += elapsedTime;
-                if (flashElement.c() === true) {
-                    flashVisibleTime += elapsedTime;
+            if (flashVersion.installed != "false") {
+                var runFlashVis = function() {
+                    var currentTime = new Date().getTime();
+                    var elapsedTime = (currentTime - flashLastTime) / 1000.0;
+                    flashLastTime = currentTime;
+                    // Assume the visibily state is true for this time period
+                    flashTotalTime += elapsedTime;
+                    if (flashElement.c() === true) {
+                        flashVisibleTime += elapsedTime;
+                    }
+                    setTimeout(runFlashVis, 200)
                 }
-                setTimeout(runFlashVis, 200)
+                runFlashVis();
             }
-            runFlashVis();
+            
 
             // (9) Mouse over detection
             var mouseDetect = new MouseoverDetection(adElement, eventLog);
@@ -197,9 +205,6 @@ ready(function() {
             var opacityStyle = topWindow.document.body.style.opacity;
             var visibilityStyle = topWindow.document.body.style.visibility;
 
-            // (20) Flash version 
-            var flashVersion = new FlashDetect()
-
             // (21) Detect actual IE Browser Version
             var realIEVersion = browserDetect.DetectActualIEBrowserVersion();
 
@@ -233,7 +238,6 @@ ready(function() {
             eventData[EventLog.FRAME_DISPLAY] = displayStyle;
             eventData[EventLog.FRAME_OPACITY] = opacityStyle;
             eventData[EventLog.FRAME_VISIBILITY] = visibilityStyle;
-            eventData[EventLog.FLASH_AVAIL] = flashVersion.installed;
             eventData[EventLog.FLASH_MAJOR] = flashVersion.major;
             eventData[EventLog.FLASH_MINOR] = flashVersion.minor;
             eventData[EventLog.FLASH_REVISION] = flashVersion.revision;

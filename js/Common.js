@@ -1,6 +1,7 @@
 var UNDEFINED = "undefined";
 var SCRIPT_URL = "cdn.adamity.com/adamity.js"
-var EVENT_URL = "//event.adamity.com/event.gif";
+var EVENT_URL = "//event.adamity.com/event";
+var IMPRESSION_URL = "//event.adamity.com/impression"
 var SWF_URL = "//cdn.adamity.com/a.swf"
 
 Object.extend = function(destination, source) {

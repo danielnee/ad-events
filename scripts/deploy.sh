@@ -32,6 +32,9 @@ mkdir -p /usr/adamity/test/js;'
 
 # Event GIF
 scp -i $KEY_PAIR ../img/event.gif $USER@$SERVER:/usr/adamity/event
+# Impression
+scp -i $KEY_PAIR ../impression.php $USER@$SERVER:/usr/adamity/event
+scp -i $KEY_PAIR ../helper.php $USER@$SERVER:/usr/adamity/event
 
 # Javascript and flash on cdn
 scp -i $KEY_PAIR ../js/adamity.js $USER@$SERVER:/usr/adamity/cdn

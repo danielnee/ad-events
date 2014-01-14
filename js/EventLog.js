@@ -9,6 +9,26 @@ function EventLog(adElement) {
         placementData = data;
     }
     
+    this.LogImpression = function(placementData) {
+        var impressionUrl = CreateBasicImpressionUrl(); 
+        
+        // Turn the data into array
+        var dataStrings = new Array();
+        for(var key in placementData)
+        {
+            if (placementData.hasOwnProperty(key))
+            {
+                dataStrings.push(CreateKeyValue(key, placementData[key]));
+            }
+        }
+        
+        while (dataStrings.length != 0) {
+            var curKeyVal = dataStrings.pop();      
+            impressionUrl += "&" + curKeyVal;
+        }
+        FireEvent(impressionUrl);
+    }
+    
     this.LogEvent = function(data) {
         var eventUrl = CreateBasicEventUrl();
         var curLength = eventUrl.length;
@@ -64,16 +84,9 @@ function EventLog(adElement) {
         
         // Construct the placement parameters
         var placementData = {};
-        if (queryParams.hasOwnProperty(EventLog.ADVERTISER)) placementData[EventLog.ADVERTISER] = queryParams[EventLog.ADVERTISER];
-        if (queryParams.hasOwnProperty(EventLog.CAMPAIGN)) placementData[EventLog.CAMPAIGN] = queryParams[EventLog.CAMPAIGN];
         if (queryParams.hasOwnProperty(EventLog.PLACEMENT)) placementData[EventLog.PLACEMENT] = queryParams[EventLog.PLACEMENT];
         if (queryParams.hasOwnProperty(EventLog.CREATIVE)) placementData[EventLog.CREATIVE] = queryParams[EventLog.CREATIVE];
-        if (queryParams.hasOwnProperty(EventLog.PUB_SITE)) placementData[EventLog.PUB_SITE] = queryParams[EventLog.PUB_SITE];
-        if (queryParams.hasOwnProperty(EventLog.CHANNEL)) placementData[EventLog.CHANNEL] = queryParams[EventLog.CHANNEL];
-        if (queryParams.hasOwnProperty(EventLog.PUBLISHER)) placementData[EventLog.PUBLISHER] = queryParams[EventLog.PUBLISHER];
-        if (queryParams.hasOwnProperty(EventLog.AGENCY)) placementData[EventLog.AGENCY] = queryParams[EventLog.AGENCY];
-        if (queryParams.hasOwnProperty(EventLog.AGENCY)) placementData[EventLog.AGENCY] = queryParams[EventLog.AGENCY];
-        
+
         return placementData;
     }
     
@@ -91,6 +104,12 @@ function EventLog(adElement) {
         return EVENT_URL + "?" + CreateKeyValue(EventLog.SESSION_ID, sesssionId) + "&" + CreateKeyValue(EventLog.CACHEBUST, cachebust) + "&" + CreateKeyValue(EventLog.ITEM_NO, item);
     }
     
+    var CreateBasicImpressionUrl = function() {
+        var cachebust = new Date().getTime();
+        
+        return IMPRESSION_URL + "?" + CreateKeyValue(EventLog.SESSION_ID, sesssionId) + "&" + CreateKeyValue(EventLog.CACHEBUST, cachebust);
+    }
+    
     var CreateKeyValue = function(key, value) {
         return key + "=" + encodeURIComponent(value);
     }
@@ -102,59 +121,53 @@ EventLog.CACHEBUST = "cb";
 EventLog.ITEM_NO = "item";
 
 // Placement/Creative variables
-EventLog.ADVERTISER = "padv";
-EventLog.CAMPAIGN = "pcamp";
-EventLog.PLACEMENT = "pplace";
-EventLog.CREATIVE = "pcreative";
-EventLog.PUB_SITE = "ppubsite";
-EventLog.CHANNEL = "pchannel";
-EventLog.PUBLISHER = "ppub";
-EventLog.AGENCY = "pagency";
+EventLog.PLACEMENT = "placement";
+EventLog.CREATIVE = "creative";
 EventLog.EVENT_TYPE = "action";
 
 // Impression variables
-EventLog.AD_DEPTH = "caddepth";
-EventLog.TOP_WINDOW_DEPTH = "ctopdepth";
-EventLog.TOP_URL = "ctopurl";
-EventLog.ALT_URL_USED = "calturl";
-EventLog.DOMAIN_ANCESTORS = "cancestors";
-EventLog.BROWSER_WINDOW_HEIGHT = "cbrheight";
-EventLog.BROWSER_WINDOW_WIDTH = "cbrwidth";
-EventLog.SCREEN_HEIGHT = "cscheight";
-EventLog.SCREEN_WIDTH = "cswidth";
-EventLog.TIMEZONE = "ctimezone";
-EventLog.LANGUAGE = "clang";
-EventLog.COOKIE_AVAILABLE = "ccook";
-EventLog.IS_TABBED = "ctabbed";
-EventLog.IS_OBSTRUCTED = "cobstruct";
-EventLog.AD_WIDTH = "cadwidth";
-EventLog.AD_HEIGHT = "cadheight";
-EventLog.FRAME_HEIGHT = "cfheight";
-EventLog.FRAME_WIDTH = "cfwidth";
-EventLog.FRAME_DISPLAY = "cfdisplay";
-EventLog.FRAME_OPACITY = "cfopacity";
-EventLog.FRAME_VISIBILITY = "cfvis";
-EventLog.FLASH_AVAIL = "cflavail";
-EventLog.FLASH_MAJOR = "cflmajor";
-EventLog.FLASH_MINOR = "cflminor";
-EventLog.FLASH_REVISION = "cflrev";
-EventLog.BROWSER = "cbrow";
-EventLog.IE_VERSION = "cbrowiev";
-EventLog.IE_DOC_MODE = "cbrowiedoc";
-EventLog.IE_TRUE_VERSION = "cbrowietver";
-EventLog.INITIAL_BELOW_THE_FOLD = "cibtf";
-EventLog.GEOMETRIC_VISIBILITY_INITIAL_STATE = "cgvisi";
+EventLog.AD_DEPTH = "addepth";
+EventLog.TOP_WINDOW_DEPTH = "topdepth";
+EventLog.TOP_URL = "topurl";
+EventLog.ALT_URL_USED = "alturl";
+EventLog.DOMAIN_ANCESTORS = "ancestors";
+EventLog.BROWSER_WINDOW_HEIGHT = "brheight";
+EventLog.BROWSER_WINDOW_WIDTH = "brwidth";
+EventLog.SCREEN_HEIGHT = "scheight";
+EventLog.SCREEN_WIDTH = "swidth";
+EventLog.TIMEZONE = "timezone";
+EventLog.LANGUAGE = "lang";
+EventLog.COOKIE_AVAILABLE = "cook";
+EventLog.IS_TABBED = "tabbed";
+EventLog.IS_OBSTRUCTED = "obstruct";
+EventLog.AD_WIDTH = "adwidth";
+EventLog.AD_HEIGHT = "adheight";
+EventLog.FRAME_HEIGHT = "fheight";
+EventLog.FRAME_WIDTH = "fwidth";
+EventLog.FRAME_DISPLAY = "fdisplay";
+EventLog.FRAME_OPACITY = "fopacity";
+EventLog.FRAME_VISIBILITY = "fvis";
+EventLog.FLASH_AVAIL = "flavail";
+EventLog.FLASH_MAJOR = "flmajor";
+EventLog.FLASH_MINOR = "flminor";
+EventLog.FLASH_REVISION = "flrev";
+EventLog.BROWSER = "brow";
+EventLog.IE_VERSION = "browiev";
+EventLog.IE_DOC_MODE = "browiedoc";
+EventLog.IE_TRUE_VERSION = "browietver";
+EventLog.INITIAL_BELOW_THE_FOLD = "ibtf";
+EventLog.GEOMETRIC_VISIBILITY_INITIAL_STATE = "gvisi";
 
-EventLog.NO_CLICKS = "cclicks";
-EventLog.ENGAGEMENT = "cengage";
-EventLog.CLICK_X = "cclickx";
+EventLog.NO_CLICKS = "clicks";
+EventLog.ENGAGEMENT = "engage";
+EventLog.CLICK_X = "clickx";
 EventLog.CLICK_Y = "clicky";
-EventLog.CLICK_TIME = "cclicktime";
-EventLog.HOVER_TIME = "chovertime";
-EventLog.GEOMETRIC_VISIBILITY_TOTAL_TIME = "cgvistotal";
-EventLog.GEOMETRIC_VISIBILITY_VISIBLE_TIME = "cgvisvis";
-EventLog.FLASH_VISIBILITY_TOTAL_TIME = "cfvistotal";
-EventLog.FLASH_VISIBILITY_VISIBLE_TIME = "cfvisvis";
+EventLog.CLICK_TIME = "clicktime";
+EventLog.HOVER_TIME = "hovertime";
+EventLog.GEOMETRIC_VISIBILITY_TOTAL_TIME = "gvistotal";
+EventLog.GEOMETRIC_VISIBILITY_VISIBLE_TIME = "gvisvis";
+EventLog.FLASH_VISIBILITY_TOTAL_TIME = "fvistotal";
+EventLog.FLASH_VISIBILITY_VISIBLE_TIME = "fvisvis";
 
 EventLog.LAST_EVENT = "last";
 EventLog.ERROR = "error";
