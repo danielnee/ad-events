@@ -5,6 +5,41 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     </head>
     <body>
-        <div></div>
+       <div style="width: 2000px; height: 1000px"></div>
+<div>
+<object type="application/x-shockwave-flash" id="a1397242843987" name="a1397242843987" allowscriptaccess="always" wmode="window" data="//cdn.adamity.com/a.swf" width="300" height="250" style="border:1px solid blue;">
+<param name="hasPriority" value="true">
+<param name="allowscriptaccess" value="always">
+<param name="wmode" value="window">
+<param name="flashvars" value="hasPriority=true&amp;play=false&amp;loop=true&amp;quality=high&amp;allowscriptaccess=always&amp;allowfullscreen=false&amp;wmode=window">
+</object>
+</div>
+       <script type="text/javascript">
+           var flashElement = document.getElementById("a1397242843987")   
+           
+            var runFlashVis = function() {
+                console.log(flashElement.b())
+                setTimeout(runFlashVis, 200)
+            }
+            
+            var pollCount = 0;
+        
+        // (3) Poll the flash element to check when it is ready to report 
+            var pollFlash = function() {
+
+                if (pollCount >= 400 ) {
+                    return;
+                }
+                else if ((typeof flashElement.c === "function" && !isNaN(flashElement.b()))) {
+                    runFlashVis();
+                }
+                else {
+                    pollCount++;
+                    setTimeout(pollFlash, 100);
+                }
+            }
+            pollFlash();
+            
+       </script>
     </body>
 </html>

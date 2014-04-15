@@ -3,6 +3,7 @@ var SCRIPT_URL = "cdn.adamity.com/adamity.js"
 var EVENT_URL = "//event.adamity.com/event";
 var IMPRESSION_URL = "//event.adamity.com/impression"
 var SWF_URL = "//cdn.adamity.com/a.swf"
+var GEO_VISIBILITY_NO_DETECTION = "UNABLE_TO_DETECT"
 
 Object.extend = function(destination, source) {
     for (var property in source) {

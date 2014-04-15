@@ -12,8 +12,6 @@
 
     require_once 'helper.php';
 
-    // Salt for user id hash
-    $sIdSalt = "bkQV:hdfeS%\$G>YerT{qcQF#hq\"dQPN<X;x.5sfF3*\$tASh6dsqLjN.EHSXjQk\"8";
     // Cookie User Id
     $sIdKey = "userId";
     // Opt out flag
@@ -29,7 +27,7 @@
     parse_str(isset($cParsedUrl["query"]) ? $cParsedUrl["query"] : "", $aQueryString);
     $bDoNotCookie = isset($aQueryString[$sDoNotCookieKey]) && $aQueryString[$sDoNotCookieKey] == "1";
     $bIsOptOut = isset($_COOKIE[$sOptOut]);
-    
+        
     // Does the user have a cookie? Refresh the cookie
     if (isset($_COOKIE[$sIdKey])) {
         $sUserId = $_COOKIE[$sIdKey];
@@ -44,7 +42,7 @@
     }
     // No Cookie, create a cookie
     else if (!$bDoNotCookie && !$bIsOptOut) {
-        $sUserId = md5($sIdSalt + rand());
+        $sUserId = gen_uuid();
         setcookie($sIdKey, $sUserId, time() + $iUserIdExpireTime);
         
         // Re-direct the user back to this URL, now with do_not_cookie added

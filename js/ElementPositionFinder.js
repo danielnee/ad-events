@@ -112,7 +112,7 @@ function ElementPositionFinder() {
     }
     
     this.IsVisible = function(visiblePercent) {
-        return visiblePercent >= ElementPositionFinder.VISIBILITY_MINIMUM;
+        return visiblePercent >= ElementPositionFinder.VISIBILITY_MINIMUM && !this.IsTabbedOut();
     }
     
     this.GetPageScroll = function(cCurWindow) {
@@ -157,18 +157,7 @@ function ElementPositionFinder() {
     }
     
     this.IsTabbedOut = function() {
-        if (typeof document.hidden !== UNDEFINED) { // Opera 12.10 and Firefox 18 and later support
-            return document.hidden
-        } else if (typeof document.mozHidden !== UNDEFINED) {
-            return document.mozHidden;
-        } else if (typeof document.msHidden !== UNDEFINED) {
-            return document.msHidden;
-        } else if (typeof document.webkitHidden !== UNDEFINED) {
-            return document.webkitHidden
-        }
-        else {
-            return false;
-        }
+        return window["currentVisibility"] == "hidden";
     }
     
     /**
@@ -228,11 +217,49 @@ function ElementPositionFinder() {
             }
         }
         
-//        if (cLargestObject.nodeName.toLowerCase() == "embed") {
-//            cLargestObject = cLargestObject.parentNode;
-//        }
         return cLargestObject;
     }
 }
 
 ElementPositionFinder.VISIBILITY_MINIMUM = 0.5;
+
+// Add a listener for changes in tabbing
+var hidden = "hidden";
+
+// Standards:
+if (hidden in document)
+    document.addEventListener("visibilitychange", onTabChange);
+else if ((hidden = "mozHidden") in document)
+    document.addEventListener("mozvisibilitychange", onTabChange);
+else if ((hidden = "webkitHidden") in document)
+    document.addEventListener("webkitvisibilitychange", onTabChange);
+else if ((hidden = "msHidden") in document)
+    document.addEventListener("msvisibilitychange", onTabChange);
+// IE 9 and lower:
+else if ('onfocusin' in document)
+    document.onfocusin = document.onfocusout = onTabChange;
+// All others:
+else
+    window.onpageshow = window.onpagehide = window.onfocus = window.onblur = onTabChange;
+
+// Set the initial value
+try
+{
+    window["currentVisibility"] = document[hidden] ? "hidden" : "visible";
+}
+catch(err) {
+    window["currentVisibility"] = "visible"; // Default to visible
+}
+
+function onTabChange (evt) {
+    var v = 'visible', h = 'hidden',
+    evtMap = { 
+        focus:v, focusin:v, pageshow:v, blur:h, focusout:h, pagehide:h 
+    };
+
+    evt = evt || window.event;
+    if (evt.type in evtMap)
+        window["currentVisibility"] = evtMap[evt.type];
+    else        
+        window["currentVisibility"] = document[hidden] ? "hidden" : "visible";
+}

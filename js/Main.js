@@ -4,7 +4,7 @@ ready(function() {
         // (1) Find the ad
         var posFinder = new ElementPositionFinder();
         var script = posFinder.FindScript()
-
+                
         // If our scrupt is not find, default to document body
         if (script == null) {
             script = [document.body, ""];
@@ -12,6 +12,9 @@ ready(function() {
 
         var scriptParent = script[0].parentNode;
         var adElement = posFinder.FindAd(scriptParent);
+        if (adElement == null) {
+            adElement = scriptParent
+        }
 
         // (1) Create the event logger
         var eventLog = new EventLog(adElement);
@@ -48,7 +51,10 @@ ready(function() {
         var statusNo = 0;   
 
         // (2) Create the flash viewability
-        var adParent = adElement.parentNode;
+        var adParent = adElement
+        if (adElement.parentNode != UNDEFINED) {
+            adParent = adElement.parentNode;
+        }
         var flashDetect = new FlashVisibilityDetector();
         
         var flashElement = null;
@@ -72,6 +78,22 @@ ready(function() {
         
         var embedHandler = function (e) {  
             flashElement = e.ref;
+            
+            setTimeout(function() {
+               flashElement.style.position = "absolute";
+            }, 200);
+            
+            flashElement.style.width = "1px";
+            flashElement.style.height = "1px";
+            flashElement.style["z-index"] = "-100";
+            flashElement.style.opacity = "0";
+            flashElement.style.filter = "alpha(opacity=0)";
+            flashElement.style.top = topOffset + "px";
+            flashElement.style.left = leftOffset + "px";
+            
+            if (addHidden) {
+                flashElement.style.visibility = "hidden";
+            }            
             setTimeout(pollFlash, 100);
           };
           
@@ -80,6 +102,15 @@ ready(function() {
         var browser = browserDetect.DetectBrowser();
         var ieVersion = browserDetect.DetectIEVersion(); // Ignore this variable if not IE
         var documentMode = browserDetect.DetectDocumentMode();  // Ignore this variable if not IE  
+        
+        var leftOffset = Math.floor(posFinder.GetWidth(adElement) / 2);
+        var topOffset = Math.floor(posFinder.GetHeight(adElement) / 2);
+               
+        // For IE 8 and below we cant use visible : invisble
+        var addHidden = false;
+        if (!(browser == BrowserDetection.IE && (ieVersion == BrowserDetection.IE_VERSION_6 || ieVersion == BrowserDetection.IE_VERSION_7 || ieVersion == BrowserDetection.IE_VERSION_8))) {
+            addHidden = true;
+        }
           
         var flashId = flashDetect.CreateFlashElement(adParent, posFinder.GetWidth(adElement), posFinder.GetHeight(adElement), embedHandler, browser, ieVersion, documentMode );
 
@@ -98,7 +129,7 @@ ready(function() {
                 altDomainUsed = true;
             }
 
-            var visibleDetector = function() { return "UNABLE_TO_DETECT"};        
+            var visibleDetector = function() { return GEO_VISIBILITY_NO_DETECTION};        
             var blockedDetector = new BlockedPositionFinder();
             // (6) Select the geometric detection mechanism
             if (topDepth == 0) {
@@ -136,7 +167,7 @@ ready(function() {
             var flashLastTime = new Date().getTime();
 
             // (8) Run the two visibility detectors
-            if (visibleDetector() !== "UNABLE_TO_DETECT") {
+            if (visibleDetector() !== GEO_VISIBILITY_NO_DETECTION) {
                 var runVis = function() {
                     var currentTime = new Date().getTime();
                     var elapsedTime = (currentTime - geometricLastTime) / 1000.0;
@@ -159,6 +190,7 @@ ready(function() {
                     flashLastTime = currentTime;
                     // Assume the visibily state is true for this time period
                     flashTotalTime += elapsedTime;
+                    console.log(flashElement.b())
                     if (flashElement.c() === true) {
                         flashVisibleTime += elapsedTime;
                     }
