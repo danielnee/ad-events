@@ -19,7 +19,7 @@ function BrowserDetection() {
         else if (typeof window.WebKitPoint !== UNDEFINED) {
             browser = BrowserDetection.SAFARI;
         }
-        else if (typeof window.attachEvent !== UNDEFINED) {
+        else if (typeof window.attachEvent !== UNDEFINED || window.documentMode !== UNDEFINED) {
             browser = BrowserDetection.IE;
         }
         return browser;
@@ -30,6 +30,7 @@ function BrowserDetection() {
      * @return String IE version number
      */
     this.DetectIEVersion = function() {
+        // Add support for IE 11
         var version = BrowserDetection.IE_VERSION_UNKNOWN;
         if (window.atob) {
             version = BrowserDetection.IE_VERSION_10;

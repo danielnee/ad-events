@@ -63,11 +63,14 @@ ready(function() {
         // (3) Poll the flash element to check when it is ready to report 
         var pollFlash = function() {
             
-            if (pollCount >= 400 ) {
+            if (pollCount >= 50 ) {
+                var eventData = {};
+                eventData[EventLog.EVENT_TYPE] = EventLog.TYPE_ERROR_MAIN;
+                eventData[EventLog.ERROR] = "Reached polling limit";
+                eventLog.LogEvent(eventData);
                 return;
             }
-            else if (flashVersion.installed == "false" || (typeof flashElement.c === "function"
-        && !isNaN(flashElement.b()))) {
+            else if (flashVersion.installed == "false" || typeof flashElement.addi === "function") {
                 runDetection();
             }
             else {
@@ -79,21 +82,34 @@ ready(function() {
         var embedHandler = function (e) {  
             flashElement = e.ref;
             
-            setTimeout(function() {
-               flashElement.style.position = "absolute";
-            }, 200);
-            
+            // Handle case when we are in no iframes. Here we will likely trust the
+            // geometric result
+            if (adFrameDepth == 0 && (adParent.style.position != "static" || adParent.style.position != "")) {
+                var eventData = {};
+                eventData[EventLog.EVENT_TYPE] = EventLog.TYPE_STATUS;
+                eventData[EventLog.FLASH_DETECT_NOT_TRUSTED] = "true";
+                eventLog.LogEvent(eventData);
+            }
+            else {
+                setTimeout(function() {
+                    flashElement.style.position = "absolute";
+                    
+                    if (addHidden) {
+                        flashElement.style.visibility = "hidden";
+                    }   
+                }, 200);
+                
+                flashElement.style.top = topOffset + "px";
+                flashElement.style.left = leftOffset + "px";
+            }
+                     
             flashElement.style.width = "1px";
             flashElement.style.height = "1px";
             flashElement.style["z-index"] = "-100";
             flashElement.style.opacity = "0";
             flashElement.style.filter = "alpha(opacity=0)";
-            flashElement.style.top = topOffset + "px";
-            flashElement.style.left = leftOffset + "px";
-            
-            if (addHidden) {
-                flashElement.style.visibility = "hidden";
-            }            
+                    
+                     
             setTimeout(pollFlash, 100);
           };
           
@@ -103,21 +119,24 @@ ready(function() {
         var ieVersion = browserDetect.DetectIEVersion(); // Ignore this variable if not IE
         var documentMode = browserDetect.DetectDocumentMode();  // Ignore this variable if not IE  
         
+        var frameDetector = new FrameDetector();
+        var adFrameDepth = frameDetector.FindWindowDepth(window);  
+        
         var leftOffset = Math.floor(posFinder.GetWidth(adElement) / 2);
         var topOffset = Math.floor(posFinder.GetHeight(adElement) / 2);
                
-        // For IE 8 and below we cant use visible : invisble
+        // For IE 8 and below we cant use visible : hidden
         var addHidden = false;
-        if (!(browser == BrowserDetection.IE && (ieVersion == BrowserDetection.IE_VERSION_6 || ieVersion == BrowserDetection.IE_VERSION_7 || ieVersion == BrowserDetection.IE_VERSION_8))) {
+        //if (!(browser == BrowserDetection.IE 
+        //    && (ieVersion == BrowserDetection.IE_VERSION_6 || ieVersion == BrowserDetection.IE_VERSION_7 || ieVersion == BrowserDetection.IE_VERSION_8))) {
+        if (browser != BrowserDetection.FIREFOX && browser != BrowserDetection.IE) {
             addHidden = true;
         }
           
         var flashId = flashDetect.CreateFlashElement(adParent, posFinder.GetWidth(adElement), posFinder.GetHeight(adElement), embedHandler, browser, ieVersion, documentMode );
 
         var runDetection = function() {
-            // (4) Find out our current frame depth
-            var frameDetector = new FrameDetector();
-            var adFrameDepth = frameDetector.FindWindowDepth(window); 
+            // (4) Find out our current frame depth           
             var topElement = frameDetector.FindTopReachableWindow(window, adFrameDepth);
             var topWindow = topElement[0];
             var topDepth = topElement[1];
@@ -149,7 +168,7 @@ ready(function() {
                     return posFinder.IsVisible(curVisiblePercent);
                 }           
             }
-            else if (browser == BrowserDetection.IE && documentMode >= 9.0) {
+            else if (browser == BrowserDetection.IE && documentMode >= 9.0 && documentMode <= 10.0) {
                 visibleDetector = function() {
                     var curVisiblePercent = blockedDetector.ComputeVisibility(topWindow, function(){return blockedDetector.IEWindowPosition(topWindow)});
                     return posFinder.IsVisible(curVisiblePercent);
@@ -177,7 +196,7 @@ ready(function() {
                     if (visibleDetector() === true) {
                         geometricVisibleTime += elapsedTime;
                     }
-                    setTimeout(runVis, 200)
+                    setTimeout(runVis, 100)
                 };
 
                 runVis();
@@ -190,11 +209,11 @@ ready(function() {
                     flashLastTime = currentTime;
                     // Assume the visibily state is true for this time period
                     flashTotalTime += elapsedTime;
-                    console.log(flashElement.b())
-                    if (flashElement.c() === true) {
+                    console.log(flashElement.addi())
+                    if (flashElement.addi() === true) {
                         flashVisibleTime += elapsedTime;
                     }
-                    setTimeout(runFlashVis, 200)
+                    setTimeout(runFlashVis, 100)
                 }
                 runFlashVis();
             }

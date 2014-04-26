@@ -157,6 +157,7 @@ EventLog.IE_DOC_MODE = "browiedoc";
 EventLog.IE_TRUE_VERSION = "browietver";
 EventLog.INITIAL_BELOW_THE_FOLD = "ibtf";
 EventLog.GEOMETRIC_VISIBILITY_INITIAL_STATE = "gvisi";
+EventLog.FLASH_DETECT_NOT_TRUSTED = "flashnt"
 
 EventLog.NO_CLICKS = "clicks";
 EventLog.ENGAGEMENT = "engage";

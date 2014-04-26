@@ -1,10 +1,10 @@
 package {
 
     import flash.display.Sprite;
-	import flash.system.System;
+    import flash.system.System;
     import flash.external.ExternalInterface;
     import flash.utils.getTimer; 
-	import flash.events.Event;
+    import flash.events.Event;
     import flash.system.Security;
 
     [SWF( frameRate="30", width="1", height="1" )]
@@ -34,9 +34,9 @@ package {
             totalMilliseconds = 0;
             millisecondsInView = 0;
             this.addEventListener(Event.ENTER_FRAME, updateFrameRate);
-            ExternalInterface.addCallback("b", currentFrameRate);
-            ExternalInterface.addCallback("c", isVisible);
-		}
+            ExternalInterface.addCallback("addc", currentFrameRate);
+            ExternalInterface.addCallback("addi", isVisible);
+        }
 
         private function updateFrameRate(e : Event) : void {
             frames += 1;
