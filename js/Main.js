@@ -124,11 +124,16 @@ ready(function() {
         
         var leftOffset = Math.floor(posFinder.GetWidth(adElement) / 2);
         var topOffset = Math.floor(posFinder.GetHeight(adElement) / 2);
+        
+        // IE, we can't set the object to invisible and opactity doesn't work
+        // Best workaround is to move to top left of ad.
+        // We lose the 50% detection however
+        if (browser == BrowserDetection.IE) {
+            leftOffset = 0;
+            topOffset = 0;
+        }
                
-        // For IE 8 and below we cant use visible : hidden
         var addHidden = false;
-        //if (!(browser == BrowserDetection.IE 
-        //    && (ieVersion == BrowserDetection.IE_VERSION_6 || ieVersion == BrowserDetection.IE_VERSION_7 || ieVersion == BrowserDetection.IE_VERSION_8))) {
         if (browser != BrowserDetection.FIREFOX && browser != BrowserDetection.IE) {
             addHidden = true;
         }

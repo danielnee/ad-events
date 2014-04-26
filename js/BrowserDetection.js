@@ -30,9 +30,11 @@ function BrowserDetection() {
      * @return String IE version number
      */
     this.DetectIEVersion = function() {
-        // Add support for IE 11
         var version = BrowserDetection.IE_VERSION_UNKNOWN;
-        if (window.atob) {
+        if (window.msCrypto) {
+            version = BrowserDetection.IE_VERSION_11;
+        }
+        else if (window.atob) {
             version = BrowserDetection.IE_VERSION_10;
         }
         else if (document.addEventListener) {
@@ -109,6 +111,7 @@ BrowserDetection.CHROME = "Chrome";
 BrowserDetection.SAFARI = "Safari";
 BrowserDetection.IE = "IE";
 
+BrowserDetection.IE_VERSION_11 = 11;
 BrowserDetection.IE_VERSION_10 = 10;
 BrowserDetection.IE_VERSION_9 = 9;
 BrowserDetection.IE_VERSION_8 = 8;
