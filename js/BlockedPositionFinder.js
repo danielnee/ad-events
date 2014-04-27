@@ -49,6 +49,7 @@ function BlockedPositionFinder() {
      */
     this.IEWindowPosition = function(curWindow) {
         var x, y = 0;
+        console.log("here");
         var mouseEventCapture = function (e) {
             x = e.screenX - e.clientX;
             y = e.screenY - e.clientY;

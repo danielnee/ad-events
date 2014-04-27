@@ -70,7 +70,8 @@ ready(function() {
                 eventLog.LogEvent(eventData);
                 return;
             }
-            else if (flashVersion.installed == "false" || typeof flashElement.addi === "function") {
+            else if (flashVersion.installed == "false" || (typeof flashElement.addi === "function"
+        && !isNaN(flashElement.addc()))) {
                 runDetection();
             }
             else {
@@ -128,7 +129,7 @@ ready(function() {
         // IE, we can't set the object to invisible and opactity doesn't work
         // Best workaround is to move to top left of ad.
         // We lose the 50% detection however
-        if (browser == BrowserDetection.IE) {
+        if (browser == BrowserDetection.IE || browser == BrowserDetection.FIREFOX) {
             leftOffset = 0;
             topOffset = 0;
         }
@@ -215,7 +216,7 @@ ready(function() {
                     // Assume the visibily state is true for this time period
                     flashTotalTime += elapsedTime;
                     console.log(flashElement.addi())
-                    if (flashElement.addi() === true) {
+                    if (flashElement.addi() === true && !posFinder.IsTabbedOut()) {
                         flashVisibleTime += elapsedTime;
                     }
                     setTimeout(runFlashVis, 100)

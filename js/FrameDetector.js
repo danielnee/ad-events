@@ -15,7 +15,7 @@ function FrameDetector() {
             cCurWindow = cCurWindow.parent;
             iCurDepth++;
         }
-        
+                
         if (iCurDepth > iMaxDepth) {
             iCurDepth = -1; // Use -1 as error state
         }
@@ -40,6 +40,11 @@ function FrameDetector() {
                 var cTopWindow = cCurWindow.top;
                 while (cCurWindow != cTopWindow) {
                     cCurWindow.parent.location.href; // Access test
+                    var loc = cCurWindow.parent.location.href; // Access test
+                    if (typeof loc == UNDEFINED) {
+                        throw new Exception("Access exception")
+                    }
+                    
                     cCurWindow = cCurWindow.parent;
                     iCurDepth--;
                 }
@@ -109,6 +114,11 @@ function FrameDetector() {
             
             try {
                 cWindow.location.href; // Access test
+                var loc = cWindow.location.href; // Access test
+                if (typeof loc == UNDEFINED) {
+                    throw new Exception("Access exception")
+                }
+                    
                 return [cWindow, iDepth];
             }
             catch (cException) {
