@@ -63,6 +63,12 @@ ready(function() {
         // (3) Poll the flash element to check when it is ready to report 
         var pollFlash = function() {
             
+            var eventData = {};
+            eventData[EventLog.EVENT_TYPE] = EventLog.TYPE_ERROR_MAIN;
+            eventData[EventLog.ERROR] = "GOT HERE";
+            eventLog.LogEvent(eventData);
+            
+            
             if (pollCount >= 50 ) {
                 var eventData = {};
                 eventData[EventLog.EVENT_TYPE] = EventLog.TYPE_ERROR_MAIN;
@@ -70,7 +76,7 @@ ready(function() {
                 eventLog.LogEvent(eventData);
                 return;
             }
-            else if (flashVersion.installed == "false" || (typeof flashElement.addi === "function"
+            else if (flashVersion.installed == false || (typeof flashElement != UNDEFINED && typeof flashElement.addi === "function"
         && !isNaN(flashElement.addc()))) {
                 runDetection();
             }
@@ -83,34 +89,35 @@ ready(function() {
         var embedHandler = function (e) {  
             flashElement = e.ref;
             
-            // Handle case when we are in no iframes. Here we will likely trust the
-            // geometric result
-            if (adFrameDepth == 0 && (adParent.style.position != "static" || adParent.style.position != "")) {
-                var eventData = {};
-                eventData[EventLog.EVENT_TYPE] = EventLog.TYPE_STATUS;
-                eventData[EventLog.FLASH_DETECT_NOT_TRUSTED] = "true";
-                eventLog.LogEvent(eventData);
+            if (typeof flashElement != UNDEFINED) {
+                // Handle case when we are in no iframes. Here we will likely trust the
+                // geometric result
+                if (adFrameDepth == 0 && (adParent.style.position != "static" || adParent.style.position != "")) {
+                    var eventData = {};
+                    eventData[EventLog.EVENT_TYPE] = EventLog.TYPE_STATUS;
+                    eventData[EventLog.FLASH_DETECT_NOT_TRUSTED] = "true";
+                    eventLog.LogEvent(eventData);
+                }
+                else {
+                    setTimeout(function() {
+                        flashElement.style.position = "absolute";
+
+                        if (addHidden) {
+                            flashElement.style.visibility = "hidden";
+                        }  
+                    }, 200);
+
+                    flashElement.style.top = topOffset + "px";
+                    flashElement.style.left = leftOffset + "px";
+                }
+
+                flashElement.style.width = "1px";
+                flashElement.style.height = "1px";
+                flashElement.style["z-index"] = "-100";
+                flashElement.style.opacity = "0";
+                flashElement.style.filter = "alpha(opacity=0)";
             }
-            else {
-                setTimeout(function() {
-                    flashElement.style.position = "absolute";
-                    
-                    if (addHidden) {
-                        flashElement.style.visibility = "hidden";
-                    }   
-                }, 200);
-                
-                flashElement.style.top = topOffset + "px";
-                flashElement.style.left = leftOffset + "px";
-            }
-                     
-            flashElement.style.width = "1px";
-            flashElement.style.height = "1px";
-            flashElement.style["z-index"] = "-100";
-            flashElement.style.opacity = "0";
-            flashElement.style.filter = "alpha(opacity=0)";
-                    
-                     
+            
             setTimeout(pollFlash, 100);
           };
           
@@ -208,14 +215,13 @@ ready(function() {
                 runVis();
             }
 
-            if (flashVersion.installed != "false") {
+            if (flashVersion.installed != false) {
                 var runFlashVis = function() {
                     var currentTime = new Date().getTime();
                     var elapsedTime = (currentTime - flashLastTime) / 1000.0;
                     flashLastTime = currentTime;
                     // Assume the visibily state is true for this time period
                     flashTotalTime += elapsedTime;
-                    console.log(flashElement.addi())
                     if (flashElement.addi() === true && !posFinder.IsTabbedOut()) {
                         flashVisibleTime += elapsedTime;
                     }
