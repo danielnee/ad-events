@@ -137,6 +137,11 @@ ready(function() {
         // Best workaround is to move to top left of ad.
         // We lose the 50% detection however
         if (browser == BrowserDetection.IE || browser == BrowserDetection.FIREFOX) {
+            var eventData = {};
+            eventData[EventLog.EVENT_TYPE] = EventLog.TYPE_STATUS;
+            eventData[EventLog.FLASH_DETECT_NOT_TRUSTED] = "true";
+            eventLog.LogEvent(eventData);
+            
             leftOffset = 0;
             topOffset = 0;
         }
