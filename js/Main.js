@@ -310,7 +310,10 @@ ready(function() {
             eventData[EventLog.FLASH_MINOR] = flashVersion.minor;
             eventData[EventLog.FLASH_REVISION] = flashVersion.revision;
             eventData[EventLog.BROWSER] = browser;
-            eventData[EventLog.IE_VERSION] = ieVersion;
+            
+            if (browser == BrowserDetection.IE) {
+                eventData[EventLog.IE_VERSION] = ieVersion;
+            }
             eventData[EventLog.IE_DOC_MODE] = documentMode;
             eventData[EventLog.IE_TRUE_VERSION] = realIEVersion;
             eventData[EventLog.INITIAL_BELOW_THE_FOLD] = initialBTF;
