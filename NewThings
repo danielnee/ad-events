@@ -1,6 +1,5 @@
 
 
--- Finding other scripts and providing src
 -- Reasons for offscreen (scrolled out of view, obstructed, invisible, tabbed out, positioned offscreen, positioned invisible manner)
 
 - Limit on poll flash loop
